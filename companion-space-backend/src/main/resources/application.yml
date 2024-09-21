@@ -7,7 +7,7 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://localhost:3306/companion_space?serverTimezone=Asia/Shanghai
     username: root
-    password: root
+    password: xxx
   # session 失效时间 (分钟) 2个月
   session:
     timeout: 86400
@@ -62,14 +62,14 @@ cos:
 # 第三方登录配置 申请地址 https://uniqueker.top/
 third:
   config:
-    appId: 3078
-    appKey: 464872d3e7df753bd7e605baca4561ba
-    redirectUrl: http://49.232.232.166
+    appId: xxx
+    appKey: xxx
+    redirectUrl: xxx
 taoshao:
   img: /img/
 # 智谱 AI
 ai:
-  apiKey: 5a532ae9c55f46ddc7f9f94fb10acb24.brMZKE7lJILSwKUW
+  apiKey: xxx
 # 鱼聪明 AI
 yuapi:
   client:
