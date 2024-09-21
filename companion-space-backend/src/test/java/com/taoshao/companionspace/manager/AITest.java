@@ -19,7 +19,7 @@ public class AITest {
 
     @Test
     void testAi() {
-        ArkService service = ArkService.builder().apiKey("f7d86867-0ef8-421d-b567-881d08f5d4d6").build();
+        ArkService service = ArkService.builder().apiKey(your key).build();
         System.out.println("\n----- multiple rounds request -----");
         final List<ChatMessage> messages = Arrays.asList(
                 ChatMessage.builder().role(ChatMessageRole.SYSTEM).content("你是豆包，是由字节跳动开发的 AI 人工智能助手").build(),
@@ -27,7 +27,7 @@ public class AITest {
         );
 
         ChatCompletionRequest chatCompletionRequest = ChatCompletionRequest.builder()
-                .model("ep-20240921120357-b4hf9")
+                .model("your model")
                 .messages(messages)
                 .build();
 
