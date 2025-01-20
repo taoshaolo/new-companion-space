@@ -14,5 +14,7 @@ export type UserType = {
     "tags": string[]
     "teamIds": string[]
     "userIds": string[]
+    "longitude": number
+    "latitude": number
 }
 

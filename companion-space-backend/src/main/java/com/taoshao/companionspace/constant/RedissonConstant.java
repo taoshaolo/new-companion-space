@@ -11,25 +11,13 @@ public final class RedissonConstant {
     }
 
     /**
-     * 应用锁
-     */
-    public static final String APPLY_LOCK = "super:apply:lock:";
-    /**
-     * 解散过期团队锁
-     */
-    public static final String DISBAND_EXPIRED_TEAM_LOCK = "super:disbandTeam:lock";
-    /**
-     * 用户推荐锁
-     */
-    public static final String USER_RECOMMEND_LOCK = "super:user:recommend:lock";
-    /**
      * 博客点赞锁
      */
-    public static final String BLOG_LIKE_LOCK = "super:blog:like:lock:";
+    public static final String BLOG_LIKE_LOCK = "companionspace:blog:like:lock:";
     /**
      * 评论点赞锁
      */
-    public static final String COMMENTS_LIKE_LOCK = "super:comments:like:lock:";
+    public static final String COMMENTS_LIKE_LOCK = "companionspace:comments:like:lock:";
     /**
      * 默认等待时间
      */

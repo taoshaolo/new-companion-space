@@ -8,9 +8,9 @@ spring:
     url: jdbc:mysql://localhost:3306/companion_space?serverTimezone=Asia/Shanghai
     username: root
     password: root
-  # session 失效时间 (分钟) 2个月
+  # session 30 天过期
   session:
-    timeout: 86400
+    timeout: 2592000
     # 使用Redis作为会话存储
     store-type: redis
   redis:
@@ -21,10 +21,10 @@ server:
   port: 8080
   servlet:
     context-path: /api
+    # session 30 天过期
     session:
       cookie:
-        #cookie将仅在localhost域上有效，
-        #从而限制了cookie的共享范围，增加了安全性
+        max-age: 2592000
         domain: localhost
 mybatis-plus:
   configuration:
@@ -59,6 +59,7 @@ cos:
     bucket: xxx
 
 
+
 # 第三方登录配置 申请地址 https://uniqueker.top/
 third:
   config:
@@ -67,11 +68,18 @@ third:
     redirectUrl: http://49.232.232.166
 taoshao:
   img: /img/
+
 # 智谱 AI
 ai:
-  apiKey: 5a532ae9c55f46ddc7f9f94fb10acb24.brMZKE7lJILSwKUW
+  apiKey: xxx
 # 鱼聪明 AI
 yuapi:
   client:
-    access-key: 你的 access-key
-    secret-key: 你的 secret-key
+    access-key: 1vgbsc0bf7il61unmu8amnv4yrb3j789
+    secret-key: p03doanbwdyrr8sglpzuxycomr3n61lx
+## 讯飞 AI 配置
+xun-fei:
+  client:
+    appId: 313eb4fa
+    apiSecret: MTY5MDA3ZjJhNjQ1NzE4ZmQ4NDBkYWU1
+    apiKey: f40230dd322b2b2ea017e3decaf193dd

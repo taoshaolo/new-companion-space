@@ -74,22 +74,6 @@ const queryUser = async () => {
   jsonParseTag(userList)
 }
 
-const deleteUser = (userId: number) => {
-  showConfirmDialog({
-    title: "删除用户",
-    message:
-        '确认删除该用户？',
-  })
-      .then(async () => {
-        await request.post(`/user/delete?id=${userId}`).then(e => {
-          if (e) {
-            showSuccessToast("删除成功")
-            users.value = users.value.filter(user => user.id !== userId)
-          }
-        })
-      })
-}
-
 const showUser = (id: number) => {
   router.push({
     name: 'userShow',

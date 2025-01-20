@@ -1,5 +1,7 @@
 package com.taoshao.companionspace.service;
 
+import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.date.TimeInterval;
 import com.taoshao.companionspace.mapper.UserMapper;
 import com.taoshao.companionspace.model.entity.User;
 import org.junit.jupiter.api.Test;
@@ -74,9 +76,6 @@ public class InsertUserTest {
             user.setTags("[\"Java\",\"男\",\"Python\"]");
             userList.add(user);//插入用户列表里
         }
-//        userService.saveBatch(userList,100);//100个为一批
-//        userService.saveBatch(userList,1000);//1000个为一批
-//        userService.saveBatch(userList,10000);//10000个为一批
         userService.saveBatch(userList, 50000);//50000个为一批
         stopWatch.stop();
         System.out.println(stopWatch.getTotalTimeMillis());
@@ -85,12 +84,12 @@ public class InsertUserTest {
 
     // CPU 密集型：（复杂的算法、数据处理或计算密集型的操作）分配的核心线程数 = CPU - 1
     // IO 密集型：（读写文件、网络通信或数据库交互）分配的核心线程数可以大于 CPU 核数
-    private ExecutorService executorService = new ThreadPoolExecutor(
+    private final ExecutorService executorService = new ThreadPoolExecutor(
             60 * 2, // 核心线程池中的线程数量最大为 60
             60 * 3, // 整个线程池中最多存在 1000 个线程
             5, // 空闲线程最大的存活时间为 10 分钟
             TimeUnit.MINUTES, // 时间单位为 分钟
-            new ArrayBlockingQueue<>(20000), // 阻塞队列使用的是有界阻塞队列，容量为 10000
+            new ArrayBlockingQueue<>(20000), // 阻塞队列使用的是有界阻塞队列，容量为 20000
             Executors.defaultThreadFactory(), // 使用默认的线程工厂
             new ThreadPoolExecutor.AbortPolicy() // 任务的拒绝策略，默认的任务处理策略
     );
@@ -102,7 +101,6 @@ public class InsertUserTest {
     public void doConcurrencyBatchInsertUsers() {
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
-
         // 分成 10 组  每组 10000  共 10万条用户信息  用时 8261、6890
         // int batchSize = 10000;
 
@@ -118,14 +116,12 @@ public class InsertUserTest {
         // 分成 40 组  每组 2500  共 10万条用户信息               用时 6784
         // 分成 40 组  每组 2500  共 10万条用户信息 （自定义线程池） 用时 6952
         int batchSize = 5000;
-        int j = 0;
         List<CompletableFuture<Void>> futureList = new ArrayList<>();
 //        for (int i = 0; i < 10; i++) {
 //        for (int i = 0; i < 20; i++) {
+        ArrayList<User> userList = new ArrayList<>();
         for (int i = 0; i < 20; i++) {
-            ArrayList<User> userList = new ArrayList<>();
-            while (true) {//CPU计算
-                j++;
+            for (int j = 0; j < batchSize; j++) {
                 User user = new User();
                 user.setUsername("小黑子");
                 user.setUserAccount("xiaoheizi");
@@ -135,11 +131,9 @@ public class InsertUserTest {
                 user.setUserStatus(0);
                 user.setUserRole(0);
                 user.setTags("[\"Java\",\"男\",\"Python\"]");
-                userList.add(user);//插入用户列表里
-                if (j % batchSize == 0) {
-                    break;
-                }
+                userList.add(user); // 插入用户列表里
             }
+
             //启动一个异步任务，
             CompletableFuture<Void> future = CompletableFuture.runAsync(() -> {
                 System.out.println(Thread.currentThread().getName());
@@ -150,7 +144,6 @@ public class InsertUserTest {
         }
         CompletableFuture.allOf(futureList.toArray(new CompletableFuture[]{}))
                 .join();//如果还没有完成，join() 将阻塞当前线程，直到 CompletableFuture 完成。
-
         stopWatch.stop();
         System.out.println(stopWatch.getTotalTimeMillis());
     }

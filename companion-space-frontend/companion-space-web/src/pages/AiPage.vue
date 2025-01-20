@@ -46,7 +46,7 @@ const stats = ref({
   },
   ai: {
     username: "AI",
-    avatarUrl: "https://img.zcool.cn/community/0179e358a53d9aa801219c77c25d56.jpg@1280w_1l_2o_100sh.jpg",
+    avatarUrl: "https://p1.itc.cn/q_70/images03/20230908/8bb29620b4db40368ca362bd440b8412.png",
   },
   text: "",
   content: "",
@@ -179,7 +179,7 @@ const createContent = (remoteUser, nowUser, text) => {
 }
 
 .self .text {
-  background-color: #0084ff;
+  background-color: #2bd277;
   color: #fff;
 }
 </style>

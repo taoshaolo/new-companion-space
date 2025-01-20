@@ -10,8 +10,8 @@ import org.springframework.context.annotation.Configuration;
  * @Author taoshao
  * @Date 2024/9/9
  */
-@Configuration
-@ConfigurationProperties(prefix = "ai")
+//@Configuration
+//@ConfigurationProperties(prefix = "ai")
 @Data
 public class AiConfig {
     /**

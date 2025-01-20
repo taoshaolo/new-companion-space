@@ -13,7 +13,7 @@
 }
 
 .content {
-    padding-top: 22px;
+    padding-top: 50px;
     padding-bottom: 57px;
     display: flex;
     flex-direction: column
@@ -89,7 +89,7 @@
 
 .input-text {
     width: 100%;
-    height: 62px;
+    height: 45px;
     border-top: rgba(150, 151, 153, 0.76) 0.5px solid;
     padding: 8px  10px 8px 50px;
     outline: none;
@@ -100,25 +100,18 @@
 }
 
 .input-send-button {
-    height: 64px;
     border-top: rgba(150, 151, 153, 0.76) 0.5px solid;
-    border-left: rgba(150, 151, 153, 0.76) 0.5px solid;
     background-color: #ffffff;
-    border-radius: 4px;
     color: #0094fe;
-    width: 80px;
-    margin-bottom: 15px;
     line-height: 40px;
     text-align: center;
-    padding-right: 3px;
+    padding: 7px 0 10px 0;
 }
 
 .send {
-    height: 100px;
     width: 100%;
     position: fixed;
-    bottom: 5px;
+    bottom: 0px;
     display: flex;
     align-items: center;
-    padding-bottom: 20px;
 }

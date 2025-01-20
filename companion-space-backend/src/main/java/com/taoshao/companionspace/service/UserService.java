@@ -2,9 +2,8 @@ package com.taoshao.companionspace.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.taoshao.companionspace.model.entity.User;
-import com.taoshao.companionspace.model.request.UpdateTagRequest;
-import com.taoshao.companionspace.model.request.UserQueryRequest;
-import com.taoshao.companionspace.model.request.UserUpdatePassword;
+import com.taoshao.companionspace.model.request.*;
+import com.taoshao.companionspace.model.vo.UserVO;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
@@ -165,4 +164,24 @@ public interface UserService extends IService<User> {
     List<User> getFriendsById(User currentUser);
 
     User adminLogin(String userAccount, String userPassword, HttpServletRequest request);
+
+    /**
+     * 获取最匹配的用户
+     * @param num
+     * @param loginUser
+     * @return
+     */
+    List<User> matchUsers(long num, User loginUser);
+
+    // 保存地理位置
+    boolean saveGeo(UserGeoRequest userGeoRequest, User loginUser);
+
+    /**
+     * 根据地理位置获取最匹配的用户
+     * @param userMatchByGeoRequest
+     * @param loginUser
+     * @return
+     */
+    List<User> matchUsersByGeo(UserMatchByGeoRequest userMatchByGeoRequest, User loginUser);
+
 }

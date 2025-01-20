@@ -97,20 +97,16 @@ function resizeTextarea(input, autosize) {
     (0, import_utils.setRootScrollTop)(scrollTop);
   }
 }
-function mapInputType(type) {
+function mapInputType(type, inputmode) {
   if (type === "number") {
-    return {
-      type: "text",
-      inputmode: "decimal"
-    };
+    type = "text";
+    inputmode != null ? inputmode : inputmode = "decimal";
   }
   if (type === "digit") {
-    return {
-      type: "tel",
-      inputmode: "numeric"
-    };
+    type = "tel";
+    inputmode != null ? inputmode : inputmode = "numeric";
   }
-  return { type };
+  return { type, inputmode };
 }
 function getStringLength(str) {
   return [...str].length;

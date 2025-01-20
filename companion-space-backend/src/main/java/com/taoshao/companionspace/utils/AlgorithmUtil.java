@@ -1,5 +1,6 @@
 package com.taoshao.companionspace.utils;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -19,6 +20,10 @@ public class AlgorithmUtil {
      * @return
      */
     public static int minDistance(List<String> tagList1, List<String> tagList2) {
+        // 先对两个标签列表进行排序
+        Collections.sort(tagList1);
+        Collections.sort(tagList2);
+
         int n = tagList1.size();
         int m = tagList2.size();
 

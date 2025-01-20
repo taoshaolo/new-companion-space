@@ -1,5 +1,6 @@
 package com.taoshao.companionspace.manager;
 
+import cn.hutool.core.util.RandomUtil;
 import com.volcengine.ark.runtime.model.completion.chat.ChatCompletionRequest;
 import com.volcengine.ark.runtime.model.completion.chat.ChatMessage;
 import com.volcengine.ark.runtime.model.completion.chat.ChatMessageRole;
@@ -16,7 +17,11 @@ import java.util.List;
 //@SpringBootTest
 public class AITest {
 
-
+    @Test
+    void test(){
+        String code = RandomUtil.randomNumbers(4);
+        System.out.println(code);
+    }
     @Test
     void testAi() {
         ArkService service = ArkService.builder().apiKey("f7d86867-0ef8-421d-b567-881d08f5d4d6").build();

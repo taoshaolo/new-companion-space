@@ -20,8 +20,4 @@ public interface TeamConstant {
      */
     int ENCRYPTION_TEAM_STATUS = 2;
 
-    /**
-     * 候补人数
-     */
-    int NUMBER_OF_PLACES_TO_BE_FILLED = 2;
 }

@@ -10,6 +10,7 @@ import com.taoshao.companionspace.constant.UserConstant;
 import com.taoshao.companionspace.exception.BusinessException;
 import com.taoshao.companionspace.model.entity.User;
 import com.taoshao.companionspace.model.request.*;
+import com.taoshao.companionspace.model.vo.UserVO;
 import com.taoshao.companionspace.service.UserService;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -28,6 +29,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
+
+import static com.taoshao.companionspace.constant.RedisConstant.MATCH_USER;
 
 /**
  * @Author: taoshao
@@ -104,7 +107,6 @@ public class UserController {
         long result = userService.userRegistration(username, userAccount, userPassword, checkPassword);
         return ResultUtil.success(result, "注册成功");
     }
-
     /**
      * 获取当前用户信息
      *
@@ -152,7 +154,7 @@ public class UserController {
                 redisTemplate.opsForValue().set(userService.redisFormat(loginUser.getId()), result, 1 + RandomUtil.randomInt(1, 2) / 10, TimeUnit.MINUTES);
             } else {
                 // 未登录只能查看20条
-                Page<User> userPage = new Page<>(1, 30);
+                Page<User> userPage = new Page<>(1, 20);
                 LambdaQueryWrapper<User> userLambdaQueryWrapper = new LambdaQueryWrapper<>();
                 Page<User> page = userService.page(userPage, userLambdaQueryWrapper);
                 result = fixTheFirstUser(page.getRecords()).stream().map(user -> userService.getSafetyUser(user)).collect(Collectors.toList());
@@ -362,5 +364,59 @@ public class UserController {
         User currentUser = userService.getLoginUser(request);
         List<User> searchFriend = userService.searchFriend(userQueryRequest, currentUser);
         return ResultUtil.success(searchFriend);
+    }
+
+    /**
+     * 获取最匹配的用户
+     */
+    @GetMapping("/match")
+    public BaseResponse<List<User>> matchUsers(long num, HttpServletRequest request) {
+        if (num <= 0 || num > 20) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "超出范围");
+        }
+        User loginUser = userService.getLoginUser(request);
+        String key = MATCH_USER + loginUser.getId();
+        ValueOperations<String, Object> valueOperations = redisTemplate.opsForValue();
+        //1.有缓存，查缓存
+        List<User> matchUsers = (List<User>) valueOperations.get(key);
+        if (!CollectionUtils.isEmpty(matchUsers)) {
+            return ResultUtil.success(matchUsers);
+        }
+        //2.没缓存，查数据库
+        List<User> userList = userService.matchUsers(num, loginUser);
+        //3.最后存 redis
+        try {
+            valueOperations.set(key, userList, 30, TimeUnit.MINUTES);
+        } catch (Exception e) {
+            log.error("redis set key error", e);
+        }
+        return ResultUtil.success(userList);
+    }
+
+    /**
+     * 根据地理位置获取最匹配的用户
+     * @param userMatchByGeoRequest
+     * @param request
+     * @return
+     */
+    @GetMapping("/matchByGeo")
+    public BaseResponse<List<User>> matchUsersByGeo(UserMatchByGeoRequest userMatchByGeoRequest, HttpServletRequest request) {
+        if (userMatchByGeoRequest == null) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR);
+        }
+        User loginUser = userService.getLoginUser(request);
+        List<User> userList = userService.matchUsersByGeo(userMatchByGeoRequest, loginUser);
+        return ResultUtil.success(userList);
+    }
+
+//    saveGeo
+    @PostMapping("/saveGeo")
+    public BaseResponse<Boolean> saveGeo(@RequestBody UserGeoRequest userGeoRequest, HttpServletRequest request) {
+        if (userGeoRequest == null) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR);
+        }
+        User loginUser = userService.getLoginUser(request);
+        boolean saveGeo = userService.saveGeo(userGeoRequest, loginUser);
+        return ResultUtil.success(saveGeo);
     }
 }

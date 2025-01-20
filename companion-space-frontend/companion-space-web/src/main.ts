@@ -4,7 +4,7 @@ import 'vant/es/dialog/style';
 import 'vant/es/notify/style';
 import 'vant/es/image-preview/style';
 import App from './App.vue'
-import {Card, CellGroup, Divider, Empty, NavBar, Button, ConfigProvider, Field, Icon, Form, Popup} from 'vant';
+import {Card, CellGroup, Divider, Empty, NavBar, Button, ConfigProvider, Field, Icon, Form, Popup, DropdownMenu, DropdownItem} from 'vant';
 import router from "./router";
 
 const app = createApp(App);
@@ -20,6 +20,8 @@ app.use(Button);
 app.use(Popup)
 app.use(Divider);
 app.use(ConfigProvider);
+app.use(DropdownMenu);
+app.use(DropdownItem);
 app.mount('#app')
 
 

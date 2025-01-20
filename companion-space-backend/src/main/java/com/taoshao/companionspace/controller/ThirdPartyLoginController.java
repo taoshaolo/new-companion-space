@@ -7,6 +7,7 @@ import com.taoshao.companionspace.constant.UserConstant;
 import com.taoshao.companionspace.exception.BusinessException;
 import com.taoshao.companionspace.model.entity.User;
 import com.taoshao.companionspace.model.request.QQLoginRequest;
+import com.taoshao.companionspace.model.request.UserRegisterRequest;
 import com.taoshao.companionspace.service.ThirdPartyLoginService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.bind.annotation.*;

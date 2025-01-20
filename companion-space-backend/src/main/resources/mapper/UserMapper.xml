@@ -22,6 +22,8 @@
         <result property="createTime" column="createTime" jdbcType="TIMESTAMP"/>
         <result property="updateTime" column="updateTime" jdbcType="TIMESTAMP"/>
         <result property="isDelete" column="isDelete" jdbcType="TINYINT"/>
+        <result property="longitude" column="longitude" jdbcType="DECIMAL"/>
+        <result property="latitude" column="latitude" jdbcType="DECIMAL"/>
     </resultMap>
 
     <sql id="Base_Column_List">
@@ -30,7 +32,7 @@
         contactInfo,userDesc,userStatus,
         userRole,tags,teamIds,
         userIds,createTime,updateTime,
-        isDelete,email
+        isDelete,email,longitude,latitude
     </sql>
 
     <select id="userTagStatisticsDTO" resultType="com.taoshao.companionspace.statistic.UserTagStatisticsDTO">

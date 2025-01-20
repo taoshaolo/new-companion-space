@@ -26,7 +26,7 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/chat")
-public class ChatController {
+public class  ChatController {
     @Resource
     private ChatService chatService;
     @Resource
@@ -95,7 +95,7 @@ public class ChatController {
         //限流判断，每个用户一个限流器
         redisLimiterManager.doRateLimit("aiChat" + loginUser.getId());
 
-        String aiMessage = aiManager.doRequest(message);
+        String aiMessage = aiManager.doChatDefaultAi(message);
         return ResultUtil.success(aiMessage);
     }
 

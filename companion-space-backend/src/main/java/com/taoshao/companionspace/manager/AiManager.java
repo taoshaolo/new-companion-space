@@ -27,7 +27,7 @@ import java.util.List;
 @Component
 public class AiManager {
 
-    @Resource
+//    @Resource
     private ClientV4 clientV4;
     @Resource
     private YuCongMingClient yuCongMingClient;

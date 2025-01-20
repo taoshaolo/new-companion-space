@@ -15,6 +15,7 @@ import com.taoshao.companionspace.model.request.FriendAddRequest;
 import com.taoshao.companionspace.model.vo.FriendsRecordVo;
 import com.taoshao.companionspace.service.FriendsService;
 import com.taoshao.companionspace.service.UserService;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.redisson.api.RLock;
@@ -38,6 +39,7 @@ import java.util.stream.Collectors;
  * @createDate 2023-04-17 09:28:08
  */
 @Service
+@Slf4j
 public class FriendsServiceImpl extends ServiceImpl<FriendsMapper, Friends> implements FriendsService {
     @Resource
     private UserService userService;
@@ -88,7 +90,7 @@ public class FriendsServiceImpl extends ServiceImpl<FriendsMapper, Friends> impl
         } finally {
             // 只能释放自己的锁
             if (lock.isHeldByCurrentThread()) {
-                System.out.println("unLock: " + Thread.currentThread().getId());
+                log.info("unLock: " + Thread.currentThread().getId());
                 lock.unlock();
             }
         }

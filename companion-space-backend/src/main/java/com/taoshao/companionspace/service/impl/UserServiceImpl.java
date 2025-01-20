@@ -2,6 +2,7 @@ package com.taoshao.companionspace.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -10,12 +11,15 @@ import com.taoshao.companionspace.constant.UserConstant;
 import com.taoshao.companionspace.exception.BusinessException;
 import com.taoshao.companionspace.mapper.UserMapper;
 import com.taoshao.companionspace.model.entity.User;
-import com.taoshao.companionspace.model.request.UpdateTagRequest;
-import com.taoshao.companionspace.model.request.UserQueryRequest;
-import com.taoshao.companionspace.model.request.UserUpdatePassword;
+import com.taoshao.companionspace.model.request.*;
 import com.taoshao.companionspace.service.UserService;
+import com.taoshao.companionspace.utils.AlgorithmUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.math3.util.Pair;
+import org.springframework.data.geo.*;
+import org.springframework.data.redis.connection.RedisGeoCommands;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -23,9 +27,12 @@ import org.springframework.util.DigestUtils;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.stream.Collectors;
+
+import static com.taoshao.companionspace.constant.RedisConstant.MATCH_USER_BY_GEO;
 
 
 /**
@@ -42,6 +49,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     private static final String SALT = "taoshao";
     @Resource
     private UserMapper userMapper;
+
+    @Resource
+    private RedisTemplate redisTemplate;
 
     /**
      * 用户账号注册
@@ -175,9 +185,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         }
         String encryptPassword = DigestUtils.md5DigestAsHex((SALT + userPassword).getBytes(StandardCharsets.UTF_8));
         QueryWrapper<User> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("userAccount",userAccount);
-        queryWrapper.eq("userPassword",encryptPassword);
-        queryWrapper.eq("userRole",UserConstant.ADMIN_ROLE);
+        queryWrapper.eq("userAccount", userAccount);
+        queryWrapper.eq("userPassword", encryptPassword);
+        queryWrapper.eq("userRole", UserConstant.ADMIN_ROLE);
 
         User user = this.getOne(queryWrapper);
 
@@ -192,6 +202,131 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         // 记录用户的登录态
         request.getSession().setAttribute(UserConstant.LOGIN_USER_STATUS, safeUser);
         return safeUser;
+    }
+
+    @Override
+    public List<User> matchUsers(long num, User loginUser) {
+        QueryWrapper<User> queryWrapper = new QueryWrapper<>();
+        queryWrapper.select("id", "tags");
+        queryWrapper.isNotNull("tags");
+        List<User> userList = this.list(queryWrapper);
+        String tags = loginUser.getTags();
+        Gson gson = new Gson();
+        //一个 JSON 格式的字符串转换成 Java 中的 List<String> 类型
+        List<String> tagList = gson.fromJson(tags, new TypeToken<List<String>>() {
+        }.getType());
+        // Pair 用于存储两个相关联的值
+        // 集合<Pair<用户数据, 距离>>
+        List<Pair<User, Long>> list = new ArrayList<>();
+        for (User user : userList) {
+            String userTags = user.getTags();
+            //排除 无标签 和 自己
+            if (StringUtils.isBlank(userTags) || user.getId().equals(loginUser.getId())) {
+                continue;
+            }
+            List<String> userTagList = gson.fromJson(userTags, new TypeToken<List<String>>() {
+            }.getType());
+            // 计算分数
+            long distance = AlgorithmUtil.minDistance(tagList, userTagList);
+            list.add(new Pair<>(user, distance));
+        }
+        // 按编辑距离由小到大排序
+        List<Pair<User, Long>> topUserPairList = list.stream()
+                .sorted((a, b) -> (int) (a.getValue() - b.getValue()))
+                .limit(num)
+                .collect(Collectors.toList());
+
+        // 原本数据 id 列表
+        List<Long> userIdList = topUserPairList
+                .stream()
+                .map(pair -> pair.getKey().getId())
+                .collect(Collectors.toList());
+
+        // 通过用户 id 查询详细数据
+        QueryWrapper<User> userQueryWrapper = new QueryWrapper<>();
+        userQueryWrapper.in("id", userIdList);
+
+        List<User> detailedUsers = this.list(userQueryWrapper).stream()
+                .map(this::getSafetyUser)
+                // 根据 userIdList 重新排序 detailedUsers
+                .sorted(Comparator.comparingLong(user -> userIdList.indexOf(user.getId())))
+                .collect(Collectors.toList());
+        return detailedUsers;
+
+    }
+
+    // 保存地理位置
+    @Override
+    public boolean saveGeo(UserGeoRequest userGeoRequest, User loginUser) {
+        BigDecimal longitude = userGeoRequest.getLongitude();
+        BigDecimal latitude = userGeoRequest.getLatitude();
+        if (longitude == null || latitude == null) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "请先开启定位");
+        }
+        Long userId = loginUser.getId();
+        return this.update(new UpdateWrapper<User>().eq("id", userId).set("longitude", longitude).set("latitude", latitude));
+    }
+
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public List<User> matchUsersByGeo(UserMatchByGeoRequest userMatchByGeoRequest, User loginUser) {
+        BigDecimal longitude = userMatchByGeoRequest.getLongitude();
+        BigDecimal latitude = userMatchByGeoRequest.getLatitude();
+        Integer radius = userMatchByGeoRequest.getRadius();
+        Integer num = userMatchByGeoRequest.getNum();
+        Long userId = loginUser.getId();
+        // 校验
+        if (radius <= 0 || num <= 0) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR);
+        }
+        if (longitude == null || latitude == null) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "请先开启定位");
+        }
+
+        String key = MATCH_USER_BY_GEO;
+        HashMap<String, Point> map = new HashMap<>();
+        map.put(userId.toString(), new Point(longitude.doubleValue(), latitude.doubleValue()));
+        Long result = redisTemplate.opsForGeo().add(key, map);
+        if (result == null) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "位置信息错误");
+        }
+        RedisGeoCommands.GeoRadiusCommandArgs args = RedisGeoCommands.GeoRadiusCommandArgs.newGeoRadiusArgs()
+                .includeDistance()
+                .includeCoordinates()
+                .sortAscending()
+                .limit(num);
+
+        Distance distance = new Distance(radius, RedisGeoCommands.DistanceUnit.METERS);
+
+        GeoResults<RedisGeoCommands.GeoLocation<String>> results = redisTemplate.opsForGeo()
+                .radius(key, new Circle(new Point(longitude.doubleValue(), latitude.doubleValue()), distance), args);
+        ArrayList<Long> userIds = new ArrayList<>();
+        Map<Long, Double> userIdToDistanceMap = new HashMap<>();
+        if (results == null) {
+            return new ArrayList<>();
+        } else {
+            for (GeoResult<RedisGeoCommands.GeoLocation<String>> res : results) {
+                String userIdStr = res.getContent().getName();
+                try {
+                    Long userIdLong = Long.parseLong(userIdStr);
+                    userIds.add(userIdLong);
+                    userIdToDistanceMap.put(userIdLong, res.getDistance().getValue());
+                } catch (NumberFormatException e) {
+                    log.error("userIdStr 转换为 Long 失败，userIdStr: {}", userIdStr, e);
+                }
+            }
+        }
+        LambdaQueryWrapper<User> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.in(User::getId, userIds);
+        List<User> userList = this.list(queryWrapper);
+        return userList.stream()
+                .map(user -> {
+                    User safetyUser = getSafetyUser(user);
+                    safetyUser.setDistance(userIdToDistanceMap.get(user.getId()));
+                    return safetyUser;
+                })
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -305,6 +440,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         safeUser.setTags(originUser.getTags());
         safeUser.setTeamIds(originUser.getTeamIds());
         safeUser.setCreateTime(originUser.getCreateTime());
+        safeUser.setLongitude(originUser.getLongitude());
+        safeUser.setLatitude(originUser.getLatitude());
+        safeUser.setDistance(originUser.getDistance());
         return safeUser;
     }
 

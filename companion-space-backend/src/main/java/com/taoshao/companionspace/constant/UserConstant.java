@@ -13,16 +13,6 @@ public interface UserConstant {
     String LOGIN_USER_STATUS = "loginUserStatus";
 
     /**
-     * 用户缓存键名称
-     */
-    String USER_REDIS_KEY = String.format("companionspace:user:search:%s", "taoshao");
-
-    /**
-     * 标签缓存键名称
-     */
-    String TAGS_REDIS_KEY = String.format("companionspace:tags:%s", "tags");
-
-    /**
      * 默认权限
      */
     int USER_ROLE = 0;
@@ -31,9 +21,4 @@ public interface UserConstant {
      * 管理员权限
      */
     int ADMIN_ROLE = 1;
-
-    /**
-     * 未登录最大可以看多少条
-     */
-    int NOT_LONGIN_LOOK_MAX = 10;
 }

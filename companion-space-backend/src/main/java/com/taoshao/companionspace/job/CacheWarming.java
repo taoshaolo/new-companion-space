@@ -83,7 +83,7 @@ public class CacheWarming {
             log.error("CacheWarming searchUserList error ", e);
         } finally {
             if (rLock.isHeldByCurrentThread()) {
-                System.out.println("unLock: " + Thread.currentThread().getId());
+                log.info("unLock: " + Thread.currentThread().getId());
                 rLock.unlock();
             }
         }
@@ -109,7 +109,7 @@ public class CacheWarming {
             log.error("CacheWarming searchTeamList error ", e);
         } finally {
             if (rLock.isHeldByCurrentThread()) {
-                System.out.println("unLock: " + Thread.currentThread().getId());
+                log.info("unLock: " + Thread.currentThread().getId());
                 rLock.unlock();
             }
         }
@@ -147,7 +147,7 @@ public class CacheWarming {
             log.error("CacheWarming dissolutionExpiredTeam error ", e);
         } finally {
             if (rLock.isHeldByCurrentThread()) {
-                System.out.println("unLock: " + Thread.currentThread().getId());
+                log.info("unLock: " + Thread.currentThread().getId());
                 rLock.unlock();
             }
         }
@@ -167,7 +167,7 @@ public class CacheWarming {
             log.error("CacheWarming chatRecords error ", e);
         } finally {
             if (rLock.isHeldByCurrentThread()) {
-                System.out.println("unLock: " + Thread.currentThread().getId());
+                log.info("unLock: " + Thread.currentThread().getId());
                 rLock.unlock();
             }
         }
@@ -195,7 +195,7 @@ public class CacheWarming {
             log.error("CacheWarming isExpires error ", e);
         } finally {
             if (rLock.isHeldByCurrentThread()) {
-                System.out.println("unLock: " + Thread.currentThread().getId());
+                log.info("unLock: " + Thread.currentThread().getId());
                 rLock.unlock();
             }
         }

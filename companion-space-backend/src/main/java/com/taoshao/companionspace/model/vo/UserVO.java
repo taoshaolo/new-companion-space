@@ -5,6 +5,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Date;
 
 /**
@@ -97,5 +98,20 @@ public class UserVO implements Serializable {
      */
     @ApiModelProperty(value = "是否关注")
     private Boolean isFollow;
+
+    /**
+     * 经度
+     */
+    private BigDecimal longitude;
+
+    /**
+     * 纬度
+     */
+    private BigDecimal latitude;
+
+    /**
+     * 距离
+     */
+    private Double distance;
 
 }

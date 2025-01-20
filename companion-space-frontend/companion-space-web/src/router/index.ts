@@ -83,12 +83,17 @@ const routes = [
     },
     {
         path: '/chat',
-        meta: {title: "聊天",},
+        meta: {
+            title: "聊天",
+            noLayout: true,
+        },
         component: () => import("../pages/ChatPage.vue")
     },
     {
         path: '/public_chat',
-        meta: {title: "聊天室",},
+        meta: {
+            title: "聊天室",
+        },
         component: () => import("../components/Chat.vue")
     },
     {
@@ -142,6 +147,13 @@ const routes = [
             title: "AI 助手",
             noLayout: true, // 不需要使用 BasicLayout 的页面
         }
+    },
+    {
+        path: "/mapContainer",
+        meta: {
+            title: "地图",
+        },
+        component: () => import("../pages/MapContainer.vue")
     },
 
 

@@ -7,7 +7,7 @@ export declare function getRuleMessage(value: unknown, rule: FieldRule): string;
 export declare function startComposing({ target }: Event): void;
 export declare function endComposing({ target }: Event): void;
 export declare function resizeTextarea(input: HTMLInputElement, autosize: true | FieldAutosizeConfig): void;
-export declare function mapInputType(type: FieldType): {
+export declare function mapInputType(type: FieldType, inputmode?: HTMLAttributes['inputmode']): {
     type: InputHTMLAttributes['type'];
     inputmode?: HTMLAttributes['inputmode'];
 };

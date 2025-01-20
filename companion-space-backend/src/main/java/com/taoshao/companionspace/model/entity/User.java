@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Date;
 
 /**
@@ -45,7 +46,7 @@ public class User implements Serializable {
      */
     private String userPassword;
     /**
-     * 密码
+     * 邮箱
      */
     private String email;
     /**
@@ -88,4 +89,20 @@ public class User implements Serializable {
      * 是否删除
      */
     private Integer isDelete;
+
+    /**
+     * 经度
+     */
+    private BigDecimal longitude;
+
+    /**
+     * 纬度
+     */
+    private BigDecimal latitude;
+
+    /**
+     * 距离
+     */
+    @TableField(exist = false)
+    private Double distance;
 }

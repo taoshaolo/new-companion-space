@@ -47,9 +47,9 @@ public class WebSocket {
      */
     private static final Map<String, ConcurrentHashMap<String, WebSocket>> ROOMS = new HashMap<>();
     /**
-     * 线程安全的无序的集合
+     * 无序的集合
      */
-    private static final CopyOnWriteArraySet<Session> SESSIONS = new CopyOnWriteArraySet<>();
+    private static final Set<Session> SESSIONS = new HashSet<>();
     /**
      * 存储在线连接数
      */
@@ -150,6 +150,7 @@ public class WebSocket {
                 this.httpSession = httpSession;
             }
             //房间和在线用户管理
+            // Not-a-Number
             if (!"NaN".equals(teamId)) {
                 if (!ROOMS.containsKey(teamId)) {
                     ConcurrentHashMap<String, WebSocket> room = new ConcurrentHashMap<>(0);
@@ -167,6 +168,7 @@ public class WebSocket {
                     }
                 }
                 log.info("有新连接加入！当前在线人数为" + getOnlineCount());
+            // 统一管理无团队关联的会话
             } else {
                 SESSIONS.add(session);
                 SESSION_POOL.put(userId, session);

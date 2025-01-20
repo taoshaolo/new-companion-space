@@ -177,7 +177,7 @@ public class TeamServiceImpl extends ServiceImpl<TeamMapper, Team> implements Te
         } finally {
             // 只能释放自己的锁
             if (lock.isHeldByCurrentThread()) {
-                System.out.println("unLock: " + Thread.currentThread().getId());
+                log.info("unLock: " + Thread.currentThread().getId());
                 lock.unlock();
             }
         }
@@ -266,7 +266,7 @@ public class TeamServiceImpl extends ServiceImpl<TeamMapper, Team> implements Te
         } finally {
             // 只能释放自己的锁
             if (lock.isHeldByCurrentThread()) {
-                System.out.println("unLock: " + Thread.currentThread().getId());
+                log.info("unLock: " + Thread.currentThread().getId());
                 lock.unlock();
             }
         }

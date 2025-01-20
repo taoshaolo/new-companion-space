@@ -37,7 +37,10 @@ create table user
     createTime    datetime default CURRENT_TIMESTAMP null comment '创建时间',
     updateTime    datetime default CURRENT_TIMESTAMP null,
     isDelete      tinyint  default 0                 not null comment '是否删除',
-    email         varchar(128)                       null comment '邮箱'
+    email         varchar(128)                       null comment '邮箱',
+    longitude     decimal(10, 7)                     null comment '经度',
+    latitude      decimal(10, 7)                     null comment '纬度'
+
 )
     comment '用户表' charset = utf8;
 

@@ -11,6 +11,14 @@ public final class RedisConstant {
     }
 
     /**
+     * 获取最匹配的用户键
+     */
+    public static final String MATCH_USER = "companionspace:user:match:";
+    /**
+     * 根据地理位置获取最匹配的用户键
+     */
+    public static final String MATCH_USER_BY_GEO = "companionspace:user:match:geo";
+    /**
      * 博客推送键
      */
     public static final String BLOG_FEED_KEY = "companionspace:feed:blog:";

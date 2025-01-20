@@ -1,6 +1,6 @@
 <template>
   <div class="chat-container">
-    <div v-if="route.path==='/public_chat'" style="width: 100%;position: fixed;top: 44px;">
+    <div v-if="route.path==='/public_chat'" >
       <van-notice-bar
           left-icon="volume-o"
           scrollable
@@ -14,11 +14,21 @@
     <div style="margin-top: 10px;" v-if="route.path === '/public_chat'">
     </div>
     <div v-else class="heard">
-      <p v-if="stats.chatType === stats.chatEnum.PRIVATE_CHAT">{{ stats.chatUser.username.slice(0, 14) }}</p>
-      <p v-if="stats.chatType === stats.chatEnum.TEAM_CHAT">{{ stats.team.teamName.slice(0, 14) }}</p>
+      <van-sticky>
+        <van-nav-bar
+            :title="stats.chatType === stats.chatEnum.PRIVATE_CHAT ? stats.chatUser.username.slice(0, 14) : stats.chatType === stats.chatEnum.TEAM_CHAT ? stats.team.teamName.slice(0, 14) : ''"
+            left-arrow
+            @click-left="onClickLeft"
+            @click-right="showUser(stats.chatUser.id)"
+        >
+          <template #right>
+            <van-icon name="ellipsis" size="18" />
+          </template>
+        </van-nav-bar>
+      </van-sticky>
     </div>
     <div class="content" ref="chatRoom" v-html="stats.content"></div>
-    <div class="send">
+    <div :class="route.path === '/public_chat' ? 'public-chat-send' : 'send'">
       <V3Emoji
           :recent="true"
           @click-emoji="appendText"
@@ -337,6 +347,10 @@ window.showUser = (id) => {
   showUser(id)
 }
 
+const onClickLeft = () => {
+  window.history.back();
+};
+
 </script>
 <style>
 @import "../assets/css/chat.css";
@@ -372,4 +386,12 @@ window.showUser = (id) => {
   margin-left: 5px;
 }
 
+.public-chat-send {
+  width: 100%;
+  position: fixed;
+  bottom: 0px;
+  display: flex;
+  align-items: center;
+  margin-bottom: 48px;
+}
 </style>
