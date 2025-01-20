@@ -8,7 +8,7 @@ spring:
     url: jdbc:mysql://localhost:3306/companion_space?serverTimezone=Asia/Shanghai
     username: root
     password: root
-  # session 30 天过期
+  # session 失效时间 (分钟) 2个月
   session:
     timeout: 2592000
     # 使用Redis作为会话存储
@@ -75,11 +75,5 @@ ai:
 # 鱼聪明 AI
 yuapi:
   client:
-    access-key: 1vgbsc0bf7il61unmu8amnv4yrb3j789
-    secret-key: p03doanbwdyrr8sglpzuxycomr3n61lx
-## 讯飞 AI 配置
-xun-fei:
-  client:
-    appId: 313eb4fa
-    apiSecret: MTY5MDA3ZjJhNjQ1NzE4ZmQ4NDBkYWU1
-    apiKey: f40230dd322b2b2ea017e3decaf193dd
+    access-key: 你的 access-key
+    secret-key: 你的 secret-key
