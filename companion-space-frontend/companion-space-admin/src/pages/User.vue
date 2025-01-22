@@ -56,7 +56,7 @@ import {ref, watchEffect} from "vue";
 import request from "../plugins/request";
 import moment from "moment";
 import {defaultPicture, jsonParseTag} from "../common/userCommon";
-import {Message} from "@element-plus/icons-vue";
+import { ElMessage } from 'element-plus';
 
 const tableData = ref([]);
 
@@ -66,7 +66,7 @@ const loadData = async () => {
     tableData.value = res.data.data;
     jsonParseTag(res.data.data);
   }else {
-    Message.error("获取数据失败");
+    ElMessage.error("获取数据失败");
   }
 }
 

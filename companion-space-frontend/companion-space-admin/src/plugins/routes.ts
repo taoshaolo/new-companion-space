@@ -37,7 +37,12 @@ const routes = [
                 path: "/team",
                 name: "队伍管理",
                 component: Team,
-            }
+            },
+            {
+                path: "/tag",
+                name: "标签管理",
+                component: () => import("../pages/Tag.vue"),
+            },
         ],
     },
 ];

@@ -26,8 +26,10 @@
       </el-sub-menu>
       <el-sub-menu class="right-align-menu">
         <template #title>
-          <el-avatar :src="userAvatarUrl"></el-avatar>
-          <span class="user-name">{{ username }}</span>
+          <el-space>
+            <el-avatar :src="userAvatarUrl"></el-avatar>
+            <span class="user-name">{{ username }}</span>
+          </el-space>
         </template>
         <el-menu-item @click="logout">退出系统</el-menu-item>
       </el-sub-menu>

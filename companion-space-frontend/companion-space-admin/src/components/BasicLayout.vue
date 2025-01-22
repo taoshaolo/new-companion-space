@@ -34,7 +34,6 @@ export default {
 }
 
 #basicLayout .content {
-  margin-bottom: 28px;
   padding: 20px;
   background: linear-gradient(to right, #fefefe, #fff);
 }

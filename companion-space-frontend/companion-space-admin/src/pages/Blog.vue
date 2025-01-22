@@ -5,7 +5,7 @@
     <el-table-column prop="title" label="标题"/>
     <el-table-column prop="images" label="图片">
       <template #default="scope">
-        <el-image  :src="scope.row.images ? scope.row.images : defaultPicture"
+        <el-image :src="scope.row.images ? scope.row.images : defaultPicture"
                   style="width: 60px; height: 60px" fit="fill"/>
       </template>
     </el-table-column>
@@ -29,19 +29,23 @@
       </template>
     </el-table-column>
   </el-table>
-    <el-pagination class="pagination-container"
-        v-model:currentPage="currentPage"
-        :total="total"
-        @current-change="handlePageChange"
-    />
+  <el-pagination
+      v-model:current-page="currentPage"
+      v-model:page-size="pageSize"
+      :total="total"
+      :page-sizes="[10, 20, 30, 40]"
+      layout="total, sizes, prev, pager, next, jumper"
+      @size-change="handleSizeChange"
+      @current-change="handleCurrentChange"
+  />
 </template>
 
 <script setup>
 import {ref, watchEffect} from "vue";
 import request from "../plugins/request";
 import moment from "moment";
-import {defaultPicture, jsonParseTag} from "../common/userCommon";
-import {Message} from "@element-plus/icons-vue";
+import {defaultPicture} from "../common/userCommon";
+import { ElMessage } from 'element-plus';
 
 const tableData = ref([]);
 const total = ref(0);
@@ -49,7 +53,7 @@ const currentPage = ref(1)
 const pageSize = ref(10)
 
 const loadData = async () => {
-  const res = await request.get("/blog/list",{
+  const res = await request.get("/blog/list", {
     params: {
       currentPage: currentPage.value,
       pageSize: pageSize.value,
@@ -58,18 +62,25 @@ const loadData = async () => {
   if (res.data.code === 0) {
     tableData.value = res.data.data.records || [];
     total.value = res.data.data?.total || 0;
-  }else {
-    Message.error("获取数据失败");
+  } else {
+    ElMessage.error("获取数据失败");
   }
 }
 
 const handleClick = () => {
   console.log('click')
 }
-const handlePageChange = (newPage) => {
-  currentPage.value = newPage;
-  loadData(); // 当页面改变时，重新获取数据
+
+const handleSizeChange = (newSize) => {
+  pageSize.value = newSize;
+  loadData();
 };
+
+const handleCurrentChange = (newPage) => {
+  currentPage.value = newPage;
+  loadData();
+};
+
 
 /**
  * 监听 searchParams 变量，改变时触发数据的重新加载
@@ -80,12 +91,4 @@ watchEffect(() => {
 </script>
 
 <style scoped>
-.pagination-container {
-  position: fixed;
-  bottom: 0;
-  width: 100%;
-  background-color: #fff; /* 根据需要调整背景颜色 */
-  padding: 10px 0;
-  box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1); /* 可选的阴影效果 */
-}
 </style>
