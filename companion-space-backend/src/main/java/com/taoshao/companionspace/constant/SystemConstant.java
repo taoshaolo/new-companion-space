@@ -13,7 +13,7 @@ public final class SystemConstant {
     /**
      * 分页大小
      */
-    public static final long PAGE_SIZE = 8;
+    public static final long PAGE_SIZE = 10;
 
     /**
      * 默认缓冲区大小

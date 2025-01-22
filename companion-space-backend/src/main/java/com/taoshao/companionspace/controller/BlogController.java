@@ -55,12 +55,12 @@ public class BlogController {
      */
     @GetMapping("/list")
     @ApiOperation(value = "获取博文")
-    public BaseResponse<Page<BlogVO>> listBlogPage(long currentPage, String title, HttpServletRequest request) {
+    public BaseResponse<Page<BlogVO>> listBlogPage(long currentPage,long pageSize, String title, HttpServletRequest request) {
         User loginUser = userService.getLoginUser(request);
         if (loginUser == null) {
-            return ResultUtil.success(blogService.pageBlog(currentPage, title, null));
+            return ResultUtil.success(blogService.pageBlog(currentPage,pageSize, title, null));
         } else {
-            return ResultUtil.success(blogService.pageBlog(currentPage, title, loginUser.getId()));
+            return ResultUtil.success(blogService.pageBlog(currentPage,pageSize, title, loginUser.getId()));
         }
     }
 

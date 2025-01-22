@@ -45,11 +45,12 @@ public interface BlogService extends IService<Blog> {
      * 分页博客
      *
      * @param currentPage 当前页码
+     * @param currentPage 大小
      * @param title       标题
      * @param id          id
      * @return {@link Page}<{@link BlogVO}>
      */
-    Page<BlogVO> pageBlog(long currentPage, String title, Long id);
+    Page<BlogVO> pageBlog(long currentPage, long pageSize, String title, Long id);
 
     /**
      * 收到博客通过id

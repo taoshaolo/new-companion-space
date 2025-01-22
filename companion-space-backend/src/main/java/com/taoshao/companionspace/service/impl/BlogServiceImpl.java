@@ -213,11 +213,11 @@ public class BlogServiceImpl extends ServiceImpl<BlogMapper, Blog>
     }
 
     @Override
-    public Page<BlogVO> pageBlog(long currentPage, String title, Long userId) {
+    public Page<BlogVO> pageBlog(long currentPage,long pageSize, String title, Long userId) {
         LambdaQueryWrapper<Blog> blogLambdaQueryWrapper = new LambdaQueryWrapper<>();
         blogLambdaQueryWrapper.like(StringUtils.isNotBlank(title), Blog::getTitle, title);
         blogLambdaQueryWrapper.orderBy(true, false, Blog::getCreateTime);
-        Page<Blog> blogPage = this.page(new Page<>(currentPage, PAGE_SIZE), blogLambdaQueryWrapper);
+        Page<Blog> blogPage = this.page(new Page<>(currentPage, pageSize), blogLambdaQueryWrapper);
         Page<BlogVO> blogVoPage = new Page<>();
         BeanUtils.copyProperties(blogPage, blogVoPage);
         List<BlogVO> blogVOList = blogPage.getRecords().stream().map((blog) -> {

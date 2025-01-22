@@ -22,7 +22,7 @@
   <van-tree-select
       v-model:active-id="existedTagSearchList"
       v-model:main-active-index="activeIndex"
-      :items="userTagsList"
+      :items="userTags"
   />
   <van-divider/>
   <van-space direction="vertical" fill>
@@ -37,7 +37,7 @@ import {onMounted, ref, watch} from "vue";
 import {useRoute, useRouter} from "vue-router";
 import {showFailToast, showSuccessToast} from "vant";
 import getCurrent from "../service/currentUser";
-import userTagsList from "../constants/UserTagsList";
+// import userTagsList from "../constants/UserTagsList";
 import request from "../service/myAxios";
 
 const newTagSearch = ref('');
@@ -49,8 +49,33 @@ const route = useRoute()
 const userId = ref();
 const userTags = ref([]);
 
-const ids = userTagsList.flatMap(item => item.children.map(child => child.id));
-const toUpperCaseTags = ids.map(id => id.charAt(0).toUpperCase() + id.slice(1));
+// const ids = userTagsList.flatMap(item => item.children.map(child => child.id));
+let ids = [];
+// const toUpperCaseTags = ids.map(id => id.charAt(0).toUpperCase() + id.slice(1));
+let toUpperCaseTags = [];
+
+const fetchTags = async () => {
+  try {
+    const res = await request.get("/tag/get/map");
+    if (res) {
+      // 转换数据格式
+      userTags.value = Object.keys(res).map(category => ({
+        text: category,
+        children: res[category].map(tag => ({
+          id: tag.tagName, // 假设 tagName 作为 id
+          text: tag.tagName
+        }))
+      }));
+      ids = userTags.value.flatMap(item => item.children.map(child => child.id));
+      toUpperCaseTags = ids.map(id => id.charAt(0).toUpperCase() + id.slice(1));
+    } else {
+      showFailToast("获取标签列表失败");
+    }
+  } catch (error) {
+    console.error("获取标签列表失败", error);
+    showFailToast("获取标签列表失败");
+  }
+}
 
 const onSearch = () => {
   const newTagUpperCase = newTagSearch.value.charAt(0).toUpperCase() + newTagSearch.value.slice(1)
@@ -95,6 +120,8 @@ const updateTag = async () => {
   }
 }
 onMounted(() => {
+  // 获取标签列表
+  fetchTags()
   const {id, tags} = route.query
   if (id && tags) {
     userId.value = id;

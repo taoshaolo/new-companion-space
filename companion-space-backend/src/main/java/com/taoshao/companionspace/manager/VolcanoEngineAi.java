@@ -25,7 +25,7 @@ public class VolcanoEngineAi {
      */
     public String volcanoEngine(String message) {
         ArkService service = ArkService.builder()
-                .apiKey(your key)
+                .apiKey("your key")
                 .build();
 
         List<ChatMessage> messages = new ArrayList<>();
@@ -33,7 +33,7 @@ public class VolcanoEngineAi {
         messages.add(chatMessage);
 
         ChatCompletionRequest chatCompletionRequest = ChatCompletionRequest.builder()
-                .model(your model)
+                .model("your model")
                 .messages(messages)
                 .build();
 
