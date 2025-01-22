@@ -1,6 +1,5 @@
 <template>
-  <el-space>
-    <div style="margin-bottom: 20px;">
+  <div style="margin-bottom: 20px; display: flex; justify-content: center;">
       <el-input v-model="searchParams.username" placeholder="请输入用户名"
                 style="width: 200px; margin-right: 10px;"></el-input>
       <el-input v-model="searchParams.userAccount" placeholder="请输入账号"
@@ -10,9 +9,6 @@
       <el-button type="primary" @click="handleSearch">搜索</el-button>
       <el-button type="default" @click="resetSearch" style="margin-left: 10px;">重置</el-button>
     </div>
-
-
-  </el-space>
   <el-table :data="tableData" style="width: 100%">
     <el-table-column fixed prop="id" label="id"/>
     <el-table-column prop="username" label="用户名"/>
@@ -59,7 +55,7 @@
             confirm-button-text="确认"
             cancel-button-text="取消"
             icon-color="#6200ea"
-            title="确定要删除此用户吗？"
+            title="确定要删除吗？"
             @confirm="handleDelete(scope.row.id)"
         >
           <template #reference>

@@ -94,6 +94,7 @@ const refreshLoading = ref(false);
 const blogList = ref([]);
 const blogListFinished = ref(false);
 const blogCurrentPage = ref(0);
+const blogPageSize = ref(10);
 const blogSearch = ref("");
 const offset = ref({x: 303, y: 500});
 const router = useRouter();
@@ -200,11 +201,11 @@ const getBlogList = async (currentPage) => {
   let res = await request.get("/blog/list", {
     params: {
       currentPage: currentPage,
+      pageSize: blogPageSize.value,
       title: blogSearch.value,
     },
   });
   if (res) {
-    console.log(res)
     if (res.records.length > 0) {
       res.records.forEach(item => blogList.value.push(item));
     } else {

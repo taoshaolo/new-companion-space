@@ -1,17 +1,13 @@
 <template>
-  <el-space>
-    <div style="margin-bottom: 20px;">
-      <el-input v-model="searchParams.category" placeholder="请输入分类"
-                style="width: 200px; margin-right: 10px;"></el-input>
-      <el-input v-model="searchParams.tagName" placeholder="请输入标签名称"
-                style="width: 200px; margin-right: 10px;"></el-input>
-      <el-button type="primary" @click="handleSearch">搜索</el-button>
-      <el-button type="default" @click="resetSearch" style="margin-left: 10px;">重置</el-button>
-      <el-button type="primary" @click="dialogVisible = true" style="float: right;">+ 添加标签</el-button>
-    </div>
-
-
-  </el-space>
+  <div style="margin-bottom: 20px; display: flex; justify-content: center;">
+    <el-input v-model="searchParams.category" placeholder="请输入分类"
+              style="width: 200px; margin-right: 10px;"></el-input>
+    <el-input v-model="searchParams.tagName" placeholder="请输入标签名称"
+              style="width: 200px; margin-right: 10px;"></el-input>
+    <el-button type="primary" @click="handleSearch">搜索</el-button>
+    <el-button type="default" @click="resetSearch" style="margin-left: 10px;">重置</el-button>
+    <el-button type="primary" @click="dialogVisible = true">+ 添加标签</el-button>
+  </div>
 
   <el-dialog title="添加标签" v-model="dialogVisible" width="30%">
     <el-form :model="form" label-width="100px">
@@ -56,7 +52,7 @@
             confirm-button-text="确认"
             cancel-button-text="取消"
             icon-color="#6200ea"
-            title="确定要删除此标签吗？"
+            title="确定要删除吗？"
             @confirm="handleDelete(scope.row.id)"
         >
           <template #reference>

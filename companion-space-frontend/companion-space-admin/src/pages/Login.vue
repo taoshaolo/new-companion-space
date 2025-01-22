@@ -2,8 +2,8 @@
 import {Lock, User} from "@element-plus/icons-vue";
 import {reactive, ref} from 'vue'
 import type {FormInstance, FormRules} from 'element-plus'
-import request from "../plugins/request.ts";
 import {ElMessage} from 'element-plus'
+import request from "../plugins/request.ts";
 
 const loginFormRef = ref<FormInstance>()
 const resetForm = (formEl: FormInstance | undefined) => {
@@ -19,13 +19,13 @@ const submitForm = async (formEl: FormInstance | undefined) => {
       if (response.data.code === 0 && response.data.data) {
         sessionStorage.setItem("token", response.data.data)
         ElMessage({
-          message: '登陆成功!',
+          message: '登录成功!',
           type: 'success',
         })
         window.location.href = '/'
       } else {
         ElMessage({
-          message: '登录失败!'+response.data.description,
+          message: '登录失败!' + response.data.description,
           type: 'warning',
         })
       }
@@ -94,25 +94,26 @@ const loginFormRoles = reactive<FormRules<RuleForm>>({
   top: 50%;
   transform: translate(-50%, -50%);
 
-  .avatar_box {
-    height: 130px;
-    width: 130px;
-    border: 1px solid #eee;
-    border-radius: 50%;
-    padding: 10px;
-    box-shadow: 0 0 10px #ddd;
-    position: absolute;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background-color: #fff;
+.avatar_box {
+  height: 130px;
+  width: 130px;
+  border: 1px solid #eee;
+  border-radius: 50%;
+  padding: 10px;
+  box-shadow: 0 0 10px #ddd;
+  position: absolute;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: #fff;
 
-    img {
-      width: 100%;
-      height: 100%;
-      border-radius: 50%;
-      background-color: #eee;
-    }
-  }
+img {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background-color: #eee;
+}
+
+}
 }
 
 .login_form {

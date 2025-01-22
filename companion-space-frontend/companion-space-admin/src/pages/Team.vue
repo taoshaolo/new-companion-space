@@ -32,12 +32,18 @@
       </template>
     </el-table-column>
     <el-table-column fixed="right" prop="operation" label="操作">
-      <template #default>
-        <el-button link type="primary" size="small" @click="handleClick">
-          Detail
-        </el-button>
-        <el-button link type="primary" size="small">Edit</el-button>
-        <el-button link type="primary" size="small">delete</el-button>
+      <template #default="scope">
+        <el-popconfirm
+            confirm-button-text="确认"
+            cancel-button-text="取消"
+            icon-color="#6200ea"
+            title="确定要删除吗？"
+            @confirm="handleDelete(scope.row.id)"
+        >
+          <template #reference>
+            <el-button link type="primary" size="small">删除</el-button>
+          </template>
+        </el-popconfirm>
       </template>
     </el-table-column>
   </el-table>
@@ -48,19 +54,29 @@ import {ref, watchEffect} from "vue";
 import request from "../plugins/request";
 import moment from "moment";
 import {defaultPicture} from "../common/userCommon";
+import {ElMessage} from "element-plus";
 
 const tableData = ref([]);
 
 const loadData = async () => {
   const res = await request.get("/team/teams");
-  console.log("撒顶顶顶",res)
   if (res.data.code === 0) {
     tableData.value = res.data.data.teamSet;
   }
 }
 
-const handleClick = () => {
-  console.log('click')
+const handleDelete = async (id) => {
+  try {
+    const res = await request.post(`/team/${id}`)
+    if (res.data.code === 0) {
+      ElMessage.success("删除成功");
+      await loadData();
+    } else {
+      ElMessage.error("删除失败");
+    }
+  } catch (error) {
+    ElMessage.error("请求失败");
+  }
 }
 
 /**
