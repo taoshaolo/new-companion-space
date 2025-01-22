@@ -1,4 +1,18 @@
 <template>
+  <el-space>
+    <div style="margin-bottom: 20px;">
+      <el-input v-model="searchParams.username" placeholder="请输入用户名"
+                style="width: 200px; margin-right: 10px;"></el-input>
+      <el-input v-model="searchParams.userAccount" placeholder="请输入账号"
+                style="width: 200px; margin-right: 10px;"></el-input>
+      <el-input v-model="searchParams.searchText" placeholder="其他"
+                style="width: 200px; margin-right: 10px;"></el-input>
+      <el-button type="primary" @click="handleSearch">搜索</el-button>
+      <el-button type="default" @click="resetSearch" style="margin-left: 10px;">重置</el-button>
+    </div>
+
+
+  </el-space>
   <el-table :data="tableData" style="width: 100%">
     <el-table-column fixed prop="id" label="id"/>
     <el-table-column prop="username" label="用户名"/>
@@ -40,44 +54,110 @@
       </template>
     </el-table-column>
     <el-table-column fixed="right" prop="operation" label="操作">
-      <template #default>
-        <el-button link type="primary" size="small" @click="handleClick">
-          Detail
-        </el-button>
-        <el-button link type="primary" size="small">Edit</el-button>
-        <el-button link type="primary" size="small">delete</el-button>
+      <template #default="scope">
+        <el-popconfirm
+            confirm-button-text="确认"
+            cancel-button-text="取消"
+            icon-color="#6200ea"
+            title="确定要删除此用户吗？"
+            @confirm="handleDelete(scope.row.id)"
+        >
+          <template #reference>
+            <el-button link type="primary" size="small">删除</el-button>
+          </template>
+        </el-popconfirm>
       </template>
     </el-table-column>
   </el-table>
+  <el-pagination
+      v-model:current-page="currentPage"
+      v-model:page-size="pageSize"
+      :total="total"
+      :page-sizes="[10, 20, 30, 40]"
+      layout="total, sizes, prev, pager, next, jumper"
+      @size-change="handleSizeChange"
+      @current-change="handleCurrentChange"
+  />
 </template>
 
 <script setup>
-import {ref, watchEffect} from "vue";
+import {onMounted, ref} from "vue";
 import request from "../plugins/request";
 import moment from "moment";
 import {defaultPicture, jsonParseTag} from "../common/userCommon";
 import { ElMessage } from 'element-plus';
 
 const tableData = ref([]);
+const currentPage = ref(1);
+const pageSize = ref(10);
+const total = ref(0);
+const searchParams = ref({
+  username: '',
+  userAccount: '',
+  searchText: '',
+});
 
 const loadData = async () => {
-  const res = await request.get("/user/search");
+  const res = await request.get("/user/list/page",{
+    params: {
+      pageNum: currentPage.value,
+      pageSize: pageSize.value,
+      ...searchParams.value
+    }
+  });
   if (res.data.code === 0) {
-    tableData.value = res.data.data;
-    jsonParseTag(res.data.data);
+    tableData.value = res.data.data.records;
+    total.value = res.data.data?.total || 0;
+    jsonParseTag(res.data.data.records);
   }else {
     ElMessage.error("获取数据失败");
   }
 }
 
-const handleClick = () => {
-  console.log('click')
+const handleSearch = () => {
+  currentPage.value = 1; // 重置当前页为第一页
+  loadData();
 }
+const resetSearch = () => {
+  searchParams.value = {
+    username: '',
+    userAccount: '',
+  };
+  currentPage.value = 1; // 重置当前页为第一页
+  loadData();
+}
+
+
+const handleDelete = async (id) => {
+  try {
+    const res = await request.post("/user/delete", {
+      id: id,
+    });
+    if (res.data.code === 0) {
+      ElMessage.success("删除成功");
+      await loadData();
+    } else {
+      ElMessage.error("删除失败");
+    }
+  } catch (error) {
+    ElMessage.error("请求失败");
+  }
+}
+
+const handleSizeChange = (newSize) => {
+  pageSize.value = newSize;
+  loadData();
+};
+
+const handleCurrentChange = (newPage) => {
+  currentPage.value = newPage;
+  loadData();
+};
 
 /**
  * 监听 searchParams 变量，改变时触发数据的重新加载
  */
-watchEffect(() => {
+onMounted(() => {
   loadData();
 });
 </script>
