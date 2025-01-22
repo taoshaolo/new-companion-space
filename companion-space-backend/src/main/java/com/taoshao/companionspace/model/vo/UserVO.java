@@ -71,7 +71,7 @@ public class UserVO implements Serializable {
      * 状态 0 - 正常
      */
     @ApiModelProperty(value = "状态")
-    private Integer status;
+    private Integer userStatus;
 
     /**
      * 创建时间
@@ -85,19 +85,16 @@ public class UserVO implements Serializable {
     @ApiModelProperty(value = "更新时间")
     private Date updateTime;
 
-    private String profile;
+    /**
+     * 用户简介
+     */
+    private String userDesc;
 
     /**
      * 用户角色 0 - 普通用户 1 - 管理员
      */
     @ApiModelProperty(value = "用户角色")
-    private Integer role;
-
-    /**
-     * 是否关注
-     */
-    @ApiModelProperty(value = "是否关注")
-    private Boolean isFollow;
+    private Integer userRole;
 
     /**
      * 经度

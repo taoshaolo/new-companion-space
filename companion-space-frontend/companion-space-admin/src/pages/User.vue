@@ -5,7 +5,7 @@
                 style="width: 200px; margin-right: 10px;"></el-input>
       <el-input v-model="searchParams.userAccount" placeholder="请输入账号"
                 style="width: 200px; margin-right: 10px;"></el-input>
-      <el-input v-model="searchParams.searchText" placeholder="其他"
+      <el-input v-model="searchParams.searchText" placeholder="邮箱、联系人、描述"
                 style="width: 200px; margin-right: 10px;"></el-input>
       <el-button type="primary" @click="handleSearch">搜索</el-button>
       <el-button type="default" @click="resetSearch" style="margin-left: 10px;">重置</el-button>

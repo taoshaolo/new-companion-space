@@ -1,8 +1,10 @@
 package com.taoshao.companionspace.model.request;
 
+import com.taoshao.companionspace.common.PageRequest;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.util.Date;
 
 /**
  * @Author: taoshao
@@ -11,11 +13,26 @@ import java.io.Serializable;
  * @Description:
  */
 @Data
-public class UserQueryRequest implements Serializable {
+public class UserQueryRequest extends PageRequest implements Serializable {
 
     private static final long serialVersionUID = 8245489531033247232L;
     /**
-     * 查询用户
+     * id
+     */
+    private Long id;
+
+    /**
+     * 用户昵称
+     */
+    private String username;
+
+    /**
+     * 账号
+     */
+    private String userAccount;
+
+    /**
+     * 搜索关键词
      */
     private String searchText;
 }

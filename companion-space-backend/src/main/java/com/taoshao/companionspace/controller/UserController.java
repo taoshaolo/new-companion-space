@@ -1,9 +1,13 @@
 package com.taoshao.companionspace.controller;
 
 import cn.hutool.core.util.RandomUtil;
+import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.baomidou.mybatisplus.extension.plugins.pagination.PageDTO;
 import com.taoshao.companionspace.common.BaseResponse;
+import com.taoshao.companionspace.common.DeleteRequest;
 import com.taoshao.companionspace.common.ErrorCode;
 import com.taoshao.companionspace.common.ResultUtil;
 import com.taoshao.companionspace.constant.UserConstant;
@@ -17,6 +21,7 @@ import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.util.CollectionUtils;
@@ -182,6 +187,40 @@ public class UserController {
         return userList;
     }
 
+    @GetMapping("/list/page")
+    public BaseResponse<Page<UserVO>> listUserByPage(UserQueryRequest userQueryRequest, HttpServletRequest request) {
+        int size = userQueryRequest.getPageSize();
+        int current = userQueryRequest.getPageNum();
+        Long id = userQueryRequest.getId();
+        String username = userQueryRequest.getUsername();
+        String userAccount = userQueryRequest.getUserAccount();
+        String searchText = userQueryRequest.getSearchText();
+        QueryWrapper<User> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq(id != null, "id", id);
+
+        queryWrapper.like(!StrUtil.isBlank(username), "username", username);
+        queryWrapper.like(!StrUtil.isBlank(userAccount), "userAccount", userAccount);
+        if (StrUtil.isNotBlank(searchText)) {
+            // 需要拼接查询条件
+            queryWrapper.and(qw -> qw.like("userDesc", searchText)
+                    .or()
+                    .like("contactInfo", searchText)
+                    .or()
+                    .like("email", searchText)
+            );
+        }
+        Page<User> userPage = userService.page(new Page<>(current, size), queryWrapper);
+        Page<UserVO> userVOPage = new PageDTO<>(userPage.getCurrent(), userPage.getSize(), userPage.getTotal());
+        List<UserVO> userVOList = userPage.getRecords().stream().map(user -> {
+            UserVO userVO = new UserVO();
+            BeanUtils.copyProperties(user, userVO);
+            return userVO;
+        }).collect(Collectors.toList());
+        userVOPage.setRecords(userVOList);
+        return ResultUtil.success(userVOPage);
+    }
+
+
     /**
      * 搜索用户
      *
@@ -201,12 +240,13 @@ public class UserController {
     /**
      * 删除用户（管理员）
      *
-     * @param id
+     * @param deleteRequest
      * @param request
      * @return
      */
     @PostMapping("/delete")
-    public BaseResponse<Boolean> deleteUser(Long id, HttpServletRequest request) {
+    public BaseResponse<Boolean> deleteUser(@RequestBody DeleteRequest deleteRequest, HttpServletRequest request) {
+        Long id = deleteRequest.getId();
         if (!userService.isAdmin(request)) {
             throw new BusinessException(ErrorCode.NO_AUTH, "无权限");
         }
