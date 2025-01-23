@@ -30,11 +30,6 @@ public class Tag implements Serializable {
     private String tagName;
 
     /**
-     * 帖子使用标签次数
-     */
-    private Long postNum;
-
-    /**
      * 创建用户 id
      */
     private Long userId;

@@ -152,22 +152,9 @@ create table tag
         primary key,
     category   varchar(512)                       null comment '分类',
     tagName    varchar(512)                       not null comment '标签名称',
-    postNum    int      default 0                 not null comment '帖子使用标签次数',
     userId     bigint                             not null comment '创建用户 id',
     createTime datetime default CURRENT_TIMESTAMP not null comment '创建时间',
     updateTime datetime default CURRENT_TIMESTAMP not null on update CURRENT_TIMESTAMP comment '更新时间',
     isDelete   tinyint  default 0                 not null comment '是否删除'
 )
     comment '标签' engine = InnoDB;
-
-create table tag_search_history
-(
-    id         bigint auto_increment comment 'id'
-        primary key,
-    tagName    varchar(512)                       not null comment '筛选标签名称',
-    num        int      default 0                 not null comment '次数',
-    createTime datetime default CURRENT_TIMESTAMP not null comment '创建时间',
-    updateTime datetime default CURRENT_TIMESTAMP not null on update CURRENT_TIMESTAMP comment '更新时间',
-    isDelete   tinyint  default 0                 not null comment '是否删除'
-)
-    comment '标签筛选记录' engine = InnoDB;
