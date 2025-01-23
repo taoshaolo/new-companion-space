@@ -109,7 +109,6 @@ public class TagController {
             Tag newTag = new Tag();
             newTag.setTagName(tag.getTagName());
             newTag.setCategory(tag.getCategory());
-            newTag.setPostNum(tag.getPostNum());
             return newTag;
             // 按类别分组
         }).collect(Collectors.groupingBy(Tag::getCategory)));
