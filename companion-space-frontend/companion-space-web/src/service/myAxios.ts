@@ -4,7 +4,7 @@ import router from "../router";
 
 const request = axios.create({
     // @ts-ignore
-    baseURL: process.env.NODE_ENV === "development" ? 'http://localhost:8080/api' : 'http://49.232.232.166/api',
+    baseURL: process.env.NODE_ENV === "development" ? 'http://localhost:8080/api' : 'http://taoshao.icu/api',
     // baseURL: 'http://localhost:8080/api/',
 });
 request.defaults.withCredentials = true

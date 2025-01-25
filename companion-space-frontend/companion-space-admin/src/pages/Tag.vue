@@ -33,8 +33,6 @@
         <el-tag>{{ scope.row.tagName }}</el-tag>
       </template>
     </el-table-column>
-    <el-table-column prop="postNum" label="使用标签次数"/>
-
     <el-table-column prop="userId" label="创建用户 id"/>
     <el-table-column prop="createTime" label="创建时间">
       <template #default="scope">

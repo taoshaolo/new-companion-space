@@ -136,8 +136,6 @@ public class TagController {
         if (StringUtils.isNotBlank(tagName)) {
             queryWrapper.like("tagName", tagName);
         }
-        // 默认按帖子使用数降序排序
-        queryWrapper.orderByDesc("postNum");
         Page<Tag> tagPage = tagService.page(new Page<>(current, size), queryWrapper);
         return ResultUtil.success(tagPage);
     }
