@@ -3,14 +3,14 @@ spring:
   # DataSource Config
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://taoshao.icu:3306/companion_space
-    username: companion_space
-    password: taoshao666!
+    url: jdbc:mysql://xxx:3306/companion_space
+    username: xxx
+    password: xxx
   redis:
     port: 6379
-    host: taoshao.icu
+    host: xxx
     database: 3
-    password: taoshao666!
+    password: xxx
 server:
   address: 0.0.0.0
   servlet:
