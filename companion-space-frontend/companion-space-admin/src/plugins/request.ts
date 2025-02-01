@@ -1,8 +1,9 @@
 import axios from "axios";
-import {Message} from "@element-plus/icons-vue";
+import {ElMessage} from 'element-plus';
 
 const request = axios.create({
-    baseURL: "http://localhost:8080/api",
+    // baseURL: "http://localhost:8080/api",
+    baseURL: process.env.NODE_ENV === "development" ? 'http://localhost:8080/api' : 'http://49.232.232.166/api',
     timeout: 60000,
     withCredentials: true,
 });
@@ -24,10 +25,10 @@ request.interceptors.response.use(
     function (response) {
         // 任何在 2xx 范围内的状态代码都会导致触发此函数
         // 对响应数据执行某些操作
-        const { data } = response;
+        const {data} = response;
         // 未登录
         if (data.code === 40100) {
-            Message.error("未登录");
+            ElMessage.error("未登录");
             window.location.href = "/user/admin/login?redirect=" + window.location.href;
         }
         return response;

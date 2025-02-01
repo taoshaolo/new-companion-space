@@ -47,9 +47,9 @@ public class WebSocket {
      */
     private static final Map<String, ConcurrentHashMap<String, WebSocket>> ROOMS = new HashMap<>();
     /**
-     * 无序的集合
+     * 线程安全的无序的集合
      */
-    private static final Set<Session> SESSIONS = new HashSet<>();
+    private static final CopyOnWriteArraySet<Session> SESSIONS = new CopyOnWriteArraySet<>();
     /**
      * 存储在线连接数
      */
@@ -203,6 +203,7 @@ public class WebSocket {
                 log.info("【WebSocket消息】连接断开，总数为：" + SESSION_POOL.size());
                 sendAllUsers();
             }
+            session.close();  // 关闭会话
         } catch (Exception e) {
             e.printStackTrace();
         }

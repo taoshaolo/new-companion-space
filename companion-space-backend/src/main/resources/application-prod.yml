@@ -18,7 +18,7 @@ server:
       cookie:
         #cookie将仅在localhost域上有效，
         #从而限制了cookie的共享范围，增加了安全性
-        entity: xxx
+        domain: taoshao.icu
 knife4j:
   enable: false
 

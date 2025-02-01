@@ -79,7 +79,7 @@
 </template>
 
 <script setup>
-import {onMounted, ref, watch} from "vue";
+import {onBeforeUnmount, onMounted, ref, watch} from "vue";
 import UserList from "../components/UserList.vue";
 import BlogList from "../components/BlogList.vue";
 import request from "../service/myAxios";
@@ -121,10 +121,23 @@ onMounted(async () => {
   const savedValue1 = sessionStorage.getItem("selectedOption");
   if (savedValue1 !== null) {
     value1.value = parseInt(savedValue1, 10);
+    // 触发相应数据加载逻辑
+    if (value1.value === 1) {
+      await matchUser();
+    } else if (value1.value === 2) {
+      // 如果是从地图页面返回，可能需要处理地理信息
+      const { longitude, latitude } = route.query;
+      if (longitude && latitude) {
+        await matchByGeo(longitude, latitude);
+      } else {
+        value1.value = 0
+      }
+    }
   }
 });
 
 const handleDropdownChange = async () => {
+  sessionStorage.setItem("selectedOption", value1.value); // 每次变化都保存
   if (value1.value === 1) {
     // 标签匹配
     await matchUser();
@@ -179,14 +192,27 @@ const matchByGeo = async (longitude, latitude) => {
 
 // 监听路由参数的变化
 watch(
-    () => route.query,
-    (newQuery) => {
-      if (newQuery.longitude && newQuery.latitude) {
-        matchByGeo(newQuery.longitude, newQuery.latitude);
+    () => route.params,
+    (newParams) => {
+      if (newParams.userId) {
+        // 处理用户详情页返回的情况
+        const savedValue1 = sessionStorage.getItem("selectedOption");
+        if (savedValue1 !== null) {
+          value1.value = parseInt(savedValue1, 10);
+          if (value1.value === 1) {
+            matchUser();
+          } else if (value1.value === 2) {
+            const { longitude, latitude } = route.query;
+            if (longitude && latitude) {
+              matchByGeo(longitude, latitude);
+            }
+          }
+        }
       }
     },
-    {immediate: true}
+    { immediate: true }
 );
+
 
 const showUser = (id) => {
   router.push({

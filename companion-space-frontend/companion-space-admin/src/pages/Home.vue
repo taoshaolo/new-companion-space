@@ -40,7 +40,7 @@
 import VChart from "vue-echarts";
 import {computed, ref, watchEffect} from "vue";
 import request from "../plugins/request";
-import {Message} from "@element-plus/icons-vue";
+import {ElMessage} from "element-plus";
 
 const userTagList = ref([]);
 const userActivityList = ref([]);
@@ -51,7 +51,7 @@ const loadUserTagData = async () => {
   if (res.data.code === 0) {
     userTagList.value = res.data.data || [];
   } else {
-    Message.error("获取数据失败");
+    ElMessage.error("获取数据失败");
   }
 }
 const loadUserActivityData = async () => {
@@ -59,7 +59,7 @@ const loadUserActivityData = async () => {
   if (res.data.code === 0) {
     userActivityList.value = res.data.data || [];
   } else {
-    Message.error("获取数据失败");
+    ElMessage.error("获取数据失败");
   }
 }
 const loadBlogLikeData = async () => {
@@ -67,7 +67,7 @@ const loadBlogLikeData = async () => {
   if (res.data.code === 0) {
     blogLikeList.value = res.data.data || [];
   } else {
-    Message.error("获取数据失败");
+    ElMessage.error("获取数据失败");
   }
 }
 

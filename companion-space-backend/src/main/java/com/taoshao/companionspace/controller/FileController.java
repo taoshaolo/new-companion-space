@@ -34,7 +34,7 @@ import static com.taoshao.companionspace.constant.SystemConstant.FILE_END;
  */
 @RestController
 @RequestMapping("/common")
-@CrossOrigin("http://localhost:5173")
+@CrossOrigin({"http://localhost:3000", "http://taoshao.icu"})
 @Api(tags = "文件管理模块")
 public class FileController {
 
