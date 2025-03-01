@@ -21,6 +21,7 @@
         </template>
       </van-field>
     </van-cell-group>
+    <van-loading v-if="stats.loading" size="24px" vertical>加载中...</van-loading>
   </div>
 </template>
 <script setup>
@@ -50,6 +51,7 @@ const stats = ref({
   },
   text: "",
   content: "",
+  loading: false, // 添加 loading 状态
 });
 onMounted(async () => {
   stats.value.user = await getCurrent();
@@ -60,6 +62,7 @@ const send = async () => {
   if (!stats.value.text.trim()) {
     showFailToast("请输入内容");
   } else {
+    stats.value.loading = true; // 设置 loading 状态
     createContent(null, stats.value.user, stats.value.text);
     let res = await request.post("/chat/aiChat", {
       message: stats.value.text,
@@ -68,6 +71,7 @@ const send = async () => {
     if (res) {
       createContent(stats.value.ai, null, res);
     }
+    stats.value.loading = false; // 清除 loading 状态
     await nextTick(() => {
       const lastElement = chatRoom.value.lastElementChild;
       lastElement.scrollIntoView();
@@ -89,7 +93,6 @@ const createContent = (remoteUser, nowUser, text) => {
         <span class="username">${nowUser.username}</span>
         <p class="text">${text}</p>
       </div>
-      <img class="avatar" src="${nowUser.userAvatarUrl}">
     </div>
 `;
   } else if (remoteUser) {

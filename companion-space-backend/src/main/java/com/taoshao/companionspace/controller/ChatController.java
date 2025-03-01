@@ -7,11 +7,13 @@ import com.taoshao.companionspace.constant.ChatConstant;
 import com.taoshao.companionspace.exception.BusinessException;
 import com.taoshao.companionspace.manager.AiManager;
 import com.taoshao.companionspace.manager.RedisLimiterManager;
+import com.taoshao.companionspace.manager.VolcanoEngineAi;
 import com.taoshao.companionspace.model.entity.User;
 import com.taoshao.companionspace.model.request.ChatRequest;
 import com.taoshao.companionspace.model.vo.ChatMessageVo;
 import com.taoshao.companionspace.service.ChatService;
 import com.taoshao.companionspace.service.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -34,6 +36,9 @@ public class  ChatController {
 
     @Resource
     private AiManager aiManager;
+
+    @Resource
+    private VolcanoEngineAi volcanoEngineAi;
 
     @Resource
     private RedisLimiterManager redisLimiterManager;
@@ -95,7 +100,8 @@ public class  ChatController {
         //限流判断，每个用户一个限流器
         redisLimiterManager.doRateLimit("aiChat" + loginUser.getId());
 
-        String aiMessage = aiManager.doChatDefaultAi(message);
+//        String aiMessage = aiManager.doChatDefaultAi(message);
+        String aiMessage = volcanoEngineAi.volcanoEngine(message);
         return ResultUtil.success(aiMessage);
     }
 

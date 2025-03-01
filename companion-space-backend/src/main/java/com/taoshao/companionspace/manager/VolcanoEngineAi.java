@@ -8,14 +8,21 @@ import com.volcengine.ark.runtime.model.completion.chat.ChatCompletionRequest;
 import com.volcengine.ark.runtime.model.completion.chat.ChatMessage;
 import com.volcengine.ark.runtime.model.completion.chat.ChatMessageRole;
 import com.volcengine.ark.runtime.service.ArkService;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 /**
+ * 火山引擎 AI
  * @Author taoshao
  * @Date 2024/9/21
  */
 @Component
 public class VolcanoEngineAi {
+
+    @Value("${ai.apiKey}")
+    private String apiKey;
+    @Value("${ai.model}")
+    private String model;
 
     /**
      * 火山引擎 ai
@@ -25,7 +32,7 @@ public class VolcanoEngineAi {
      */
     public String volcanoEngine(String message) {
         ArkService service = ArkService.builder()
-                .apiKey("your key")
+                .apiKey(apiKey)
                 .build();
 
         List<ChatMessage> messages = new ArrayList<>();
@@ -33,18 +40,16 @@ public class VolcanoEngineAi {
         messages.add(chatMessage);
 
         ChatCompletionRequest chatCompletionRequest = ChatCompletionRequest.builder()
-                .model("your model")
+                .model(model)
                 .messages(messages)
                 .build();
 
         try {
             return (String) service.createChatCompletion(chatCompletionRequest).getChoices().get(0).getMessage().getContent();
         } catch (Exception e) {
-            e.printStackTrace();
             throw new BusinessException(ErrorCode.SYSTEM_ERROR, e.getMessage());
         }
 
-        // service.shutdownExecutor();
 
     }
 }

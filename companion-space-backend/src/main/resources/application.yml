@@ -61,17 +61,19 @@ cos:
 
 
 # 第三方登录配置 申请地址 https://uniqueker.top/
-third:
-  config:
-    appId: xxx
-    appKey: xxx
-    redirectUrl: http://xxx
+#third:
+#  config:
+#    appId: xxxx
+#    appKey: xxxx
+#    redirectUrl: http://xxx
 taoshao:
   img: /img/
 
 # 智谱 AI
 ai:
-  apiKey: xxx
+  apiKey: f7d86867-0ef8-421d-b567-881d08f5d4d6
+  model: ep-20240921120357-b4hf9
+
 # 鱼聪明 AI
 yuapi:
   client:
