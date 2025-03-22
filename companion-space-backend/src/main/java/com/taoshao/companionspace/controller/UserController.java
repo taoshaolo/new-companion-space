@@ -126,6 +126,15 @@ public class UserController {
         return ResultUtil.success(userService.getSafetyUser(user));
     }
 
+    @GetMapping("/admin/current")
+    public BaseResponse<User> getAdminCurrentUser(HttpServletRequest request) {
+        User adminUser = (User) request.getSession().getAttribute(UserConstant.ADMIN_LOGIN_USER_STATUS);
+        if (adminUser == null) {
+            throw new BusinessException(ErrorCode.NOT_LOGIN, "请先登录");
+        }
+        return ResultUtil.success(adminUser);
+    }
+
     /**
      * 查询所有用户列表
      *
@@ -273,6 +282,14 @@ public class UserController {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
         return ResultUtil.success(userService.loginOut(request));
+    }
+
+    @PostMapping("/admin/loginOut")
+    public BaseResponse<Integer> adminLoginOut(HttpServletRequest request) {
+        if (request == null) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR);
+        }
+        return ResultUtil.success(userService.adminLoginOut(request));
     }
 
     /**

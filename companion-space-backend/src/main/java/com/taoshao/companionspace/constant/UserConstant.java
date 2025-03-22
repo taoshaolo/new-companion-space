@@ -11,6 +11,7 @@ public interface UserConstant {
      * 用户登录态键值
      */
     String LOGIN_USER_STATUS = "loginUserStatus";
+    String ADMIN_LOGIN_USER_STATUS = "adminloginUserStatus";
 
     /**
      * 默认权限

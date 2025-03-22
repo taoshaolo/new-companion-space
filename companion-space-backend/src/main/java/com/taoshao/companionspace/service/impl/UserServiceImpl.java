@@ -200,7 +200,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         // 用户脱敏
         User safeUser = getSafetyUser(user);
         // 记录用户的登录态
-        request.getSession().setAttribute(UserConstant.LOGIN_USER_STATUS, safeUser);
+        request.getSession().setAttribute(UserConstant.ADMIN_LOGIN_USER_STATUS, safeUser);
         return safeUser;
     }
 
@@ -449,6 +449,12 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     @Override
     public Integer loginOut(HttpServletRequest request) {
         request.getSession().removeAttribute(UserConstant.LOGIN_USER_STATUS);
+        return 1;
+    }
+
+    @Override
+    public Integer adminLoginOut(HttpServletRequest request) {
+        request.getSession().removeAttribute(UserConstant.ADMIN_LOGIN_USER_STATUS);
         return 1;
     }
 

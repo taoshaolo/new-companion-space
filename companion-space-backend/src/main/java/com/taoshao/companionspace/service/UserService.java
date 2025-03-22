@@ -52,6 +52,7 @@ public interface UserService extends IService<User> {
      * @return
      */
     Integer loginOut(HttpServletRequest request);
+    Integer adminLoginOut(HttpServletRequest request);
 
     /**
      * 是否为管理员

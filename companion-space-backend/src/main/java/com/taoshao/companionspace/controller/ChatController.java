@@ -20,6 +20,8 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
+import static com.taoshao.companionspace.constant.RedisConstant.AI_LIMITING;
+
 /**
  * @Author: taoshao
  * @Date: 2023年04月11日 11:37
@@ -98,7 +100,7 @@ public class  ChatController {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
         //限流判断，每个用户一个限流器
-        redisLimiterManager.doRateLimit("aiChat" + loginUser.getId());
+        redisLimiterManager.doRateLimit(AI_LIMITING + loginUser.getId());
 
 //        String aiMessage = aiManager.doChatDefaultAi(message);
         String aiMessage = volcanoEngineAi.volcanoEngine(message);
