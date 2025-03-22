@@ -29,7 +29,9 @@ request.interceptors.response.use(
         // 未登录
         if (data.code === 40100) {
             ElMessage.error("未登录");
-            window.location.href = "/user/admin/login?redirect=" + window.location.href;
+            if (!window.location.pathname.includes('/login')) {
+                window.location.href = `/login?redirect=${window.location.href}`;
+            }
         }
         return response;
     },
