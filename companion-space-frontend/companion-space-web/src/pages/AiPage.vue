@@ -152,7 +152,7 @@ const createContent = (remoteUser, nowUser, text) => {
   max-width: 200px;
   font-size: 12px;
   color: #999;
-  padding-bottom: 4px;
+  padding-bottom: 1px;
   white-space: nowrap;
   overflow: visible;
   /*background-color: #fff;*/

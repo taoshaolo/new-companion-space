@@ -59,7 +59,7 @@ const handleSelect = (index) => {
   });
 }
 onMounted(async () => {
-  const res = await request.get("/user/current");
+  const res = await request.get("/user/admin/current");
   console.log(res)
   if (res.data.code === 0) {
     userAvatarUrl.value = res.data.data.userAvatarUrl;
@@ -76,7 +76,7 @@ const logout = async () => {
         type: "warning",
       },
   )
-  const res = await request.post("/user/loginOut");
+  const res = await request.post("/user/admin/loginOut");
   if (res.data.code === 0) {
     ElMessage({
       message: "退出成功",

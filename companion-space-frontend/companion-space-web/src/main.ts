@@ -6,6 +6,7 @@ import 'vant/es/image-preview/style';
 import App from './App.vue'
 import {Card, CellGroup, Divider, Empty, NavBar, Button, ConfigProvider, Field, Icon, Form, Popup, DropdownMenu, DropdownItem} from 'vant';
 import router from "./router";
+import '@vant/touch-emulator';
 
 const app = createApp(App);
 app.use(Form);
