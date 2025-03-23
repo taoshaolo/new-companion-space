@@ -179,7 +179,7 @@ const matchByGeo = async (longitude, latitude) => {
   const res = await request.get("/user/matchByGeo", {
     params: {
       num: 10,
-      radius: 100000,
+      radius: 10000,
       longitude,
       latitude
     }

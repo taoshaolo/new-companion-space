@@ -22,12 +22,16 @@ const onSubmit = async () => {
     userAccount: username.value,
     userPassword: password.value
   })
-  showToast(loginUser)
-  if (loginUser) {
+  if (loginUser && loginUser.data.code === 0) {
     sessionStorage.setItem("longUser", loginUser ? JSON.stringify(loginUser) : undefined)
     showSuccessToast('登录成功')
     await router.push(jumpPath)
+  }else {
+    console.log(loginUser)
+    console.log(111)
+    message.error(loginUser.data.description)
   }
+
 };
 
 onMounted(async () => {
