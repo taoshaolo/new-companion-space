@@ -218,14 +218,26 @@ public class UserController {
                     .like("email", searchText)
             );
         }
+        User loginUser = userService.getLoginUser(request);
+        Long userId = loginUser.getId();
+        String redisKey = MATCH_USER + userId + ":" + current;
+        Page<UserVO> userVOPage = (Page<UserVO>) redisTemplate.opsForValue().get(redisKey);
+        if (userVOPage != null) {
+            return ResultUtil.success(userVOPage);
+        }
         Page<User> userPage = userService.page(new Page<>(current, size), queryWrapper);
-        Page<UserVO> userVOPage = new PageDTO<>(userPage.getCurrent(), userPage.getSize(), userPage.getTotal());
+        userVOPage = new Page<>(userPage.getCurrent(), userPage.getSize(), userPage.getTotal());
         List<UserVO> userVOList = userPage.getRecords().stream().map(user -> {
             UserVO userVO = new UserVO();
             BeanUtils.copyProperties(user, userVO);
             return userVO;
         }).collect(Collectors.toList());
         userVOPage.setRecords(userVOList);
+        try {
+            redisTemplate.opsForValue().set(redisKey, userVOPage, 30, TimeUnit.MINUTES);
+        } catch (Exception e) {
+            log.error("redis set key error", e);
+        }
         return ResultUtil.success(userVOPage);
     }
 

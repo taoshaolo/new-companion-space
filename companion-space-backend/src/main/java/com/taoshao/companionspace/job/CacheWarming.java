@@ -4,11 +4,13 @@ import cn.hutool.core.date.DateUnit;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.RandomUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.google.gson.Gson;
 import com.taoshao.companionspace.model.entity.Friends;
 import com.taoshao.companionspace.model.entity.Team;
 import com.taoshao.companionspace.model.entity.User;
 import com.taoshao.companionspace.model.vo.TeamUserVo;
+import com.taoshao.companionspace.model.vo.UserVO;
 import com.taoshao.companionspace.service.ChatService;
 import com.taoshao.companionspace.service.FriendsService;
 import com.taoshao.companionspace.service.TeamService;
@@ -17,6 +19,7 @@ import com.taoshao.companionspace.utils.StringUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
+import org.springframework.beans.BeanUtils;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -32,6 +35,7 @@ import java.util.stream.Collectors;
 
 import static com.taoshao.companionspace.constant.FriendConstant.AGREE_STATUS;
 import static com.taoshao.companionspace.constant.FriendConstant.EXPIRED_STATUS;
+import static com.taoshao.companionspace.constant.RedisConstant.MATCH_USER;
 
 
 /**
@@ -69,11 +73,18 @@ public class CacheWarming {
         try {
             if (rLock.tryLock(0, -1, TimeUnit.MILLISECONDS)) {
                 for (Long mainUserId : mainUserList) {
+                    String redisKey = MATCH_USER + mainUserId + ":" + 1;
                     QueryWrapper<User> userQueryWrapper = new QueryWrapper<>();
-                    List<User> list = userService.list(userQueryWrapper);
-                    List<User> result = list.stream().map(user -> userService.getSafetyUser(user)).collect(Collectors.toList());
+                    Page<User> userPage = userService.page(new Page<>(1, 10), userQueryWrapper);
+                    Page<UserVO> userVOPage = new Page<>(userPage.getCurrent(), userPage.getSize(), userPage.getTotal());
+                    List<UserVO> userVOList = userPage.getRecords().stream().map(user -> {
+                        UserVO userVO = new UserVO();
+                        BeanUtils.copyProperties(user, userVO);
+                        return userVO;
+                    }).collect(Collectors.toList());
+                    userVOPage.setRecords(userVOList);
                     try {
-                        redisTemplate.opsForValue().set(userService.redisFormat(mainUserId), result, 1 + RandomUtil.randomInt(1, 2) / 10, TimeUnit.MINUTES);
+                        redisTemplate.opsForValue().set(redisKey, userPage, 10, TimeUnit.HOURS);
                     } catch (Exception e) {
                         log.error("redis set key error", e);
                     }
