@@ -22,7 +22,7 @@ const onSubmit = async () => {
     userAccount: username.value,
     userPassword: password.value
   })
-  if (loginUser && loginUser.data.code === 0) {
+  if (loginUser) {
     sessionStorage.setItem("longUser", loginUser ? JSON.stringify(loginUser) : undefined)
     showSuccessToast('登录成功')
     await router.push(jumpPath)
