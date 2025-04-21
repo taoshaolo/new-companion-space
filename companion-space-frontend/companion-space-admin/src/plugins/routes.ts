@@ -5,14 +5,14 @@ import Blog from "../pages/Blog.vue";
 import Team from "../pages/Team.vue";
 
 const routes = [
-    { path: "/", redirect: "/home" },
+    { path: "/", redirect: "/admin/home" },
     {
-        path: "/home",
+        path: "/admin/home",
         name: "首页",
         component: Home,
     },
     {
-        path: "/login",
+        path: "/admin/login",
         name:"登录",
         component: Login,
         meta: {
@@ -20,26 +20,26 @@ const routes = [
         },
     },
     {
-        path: "/admin",
+        path: "/manage",
         name: "管理页面",
         children: [
             {
-                path: "/user",
+                path: "/admin/user",
                 name: "用户管理",
                 component: User,
             },
             {
-                path: "/blog",
+                path: "/admin/blog",
                 name: "博客管理",
                 component: Blog,
             },
             {
-                path: "/team",
+                path: "/admin/team",
                 name: "队伍管理",
                 component: Team,
             },
             {
-                path: "/tag",
+                path: "/admin/tag",
                 name: "标签管理",
                 component: () => import("../pages/Tag.vue"),
             },

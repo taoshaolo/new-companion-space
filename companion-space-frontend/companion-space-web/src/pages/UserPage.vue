@@ -106,7 +106,7 @@ const afterRead = async (file: any) => {
   updateAvatarUrl.value = true
   if (updateAvatarUrl.value) {
     const fileFile = file.file
-    const res = await request.post("/file/upload", {
+    const res = await request.post("/common/uploadToCOS", {
       'file': fileFile,
       'biz': "user_avatar"
     }, {

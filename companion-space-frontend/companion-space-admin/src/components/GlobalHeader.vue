@@ -48,7 +48,7 @@ const router = useRouter();
 
 const userAvatarUrl = ref("");
 const username = ref("");
-const activeIndex = ref(["/home"]);
+const activeIndex = ref(["/admin/home"]);
 router.afterEach((to, from, failure) => {
   activeIndex.value = [to.path];
 });
@@ -82,7 +82,7 @@ const logout = async () => {
       message: "退出成功",
       type: "success",
     });
-    router.push("/login");
+    router.push("/admin/login");
   }
 }
 

@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <template v-if="route.path.startsWith('/login')">
+    <template v-if="route.path.startsWith('/admin/login')">
       <router-view />
     </template>
     <template v-else>

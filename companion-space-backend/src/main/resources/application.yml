@@ -50,13 +50,14 @@ knife4j:
         api-rule-resources:
           - com.taoshao.companionspace.controller
 
-#  腾讯云cos配置
+# 对象存储配置（需要从腾讯云获取）
 cos:
   client:
-    accessKey: XXX
-    secretKey: xxx
-    region: xxx
-    bucket: xxx
+    host: https://taopicture-1325680272.cos.ap-beijing.myqcloud.com
+    SecretId: AKIDeGguwkMkvujMlxvgEYeWAanmY8VghV5R
+    SecretKey: EF2bv76tVv86qX3OWQ5Wrzub4JK7g3DC
+    region: ap-beijing
+    bucket: taopicture-1325680272
 
 
 

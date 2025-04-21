@@ -320,10 +320,13 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         LambdaQueryWrapper<User> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.in(User::getId, userIds);
         List<User> userList = this.list(queryWrapper);
-        return userList.stream()
+        Map<Long, User> idToUserMap = userList.stream().collect(Collectors.toMap(User::getId, user -> user));
+        return userIds.stream()
+                .map(idToUserMap::get)
+                .filter(Objects::nonNull)
                 .map(user -> {
                     User safetyUser = getSafetyUser(user);
-                    safetyUser.setDistance(userIdToDistanceMap.get(user.getId()));
+                    safetyUser.setDistance(userIdToDistanceMap.get(safetyUser.getId()));
                     return safetyUser;
                 })
                 .collect(Collectors.toList());

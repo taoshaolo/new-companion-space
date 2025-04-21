@@ -187,7 +187,7 @@ const maxDate = new Date(2099, 5, 1)
 const afterRead = async (file: any) => {
     updateAvatarUrl.value = true
   if(updateAvatarUrl.value){
-    const teamAvatarUrl = await request.post("/file/upload", {
+    const teamAvatarUrl = await request.post("/common/uploadToCOS", {
       'file': file.file,
       'biz': "team_avatar"
     }, {

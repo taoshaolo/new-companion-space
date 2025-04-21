@@ -87,12 +87,15 @@ const fetchUsers = async () => {
   // 去除空格
   searchText.value = searchText.value.trim()
   loading.value = true;
+  const params = {
+    pageNum: pageNum.value,
+    pageSize: pageSize.value
+  }
+  if (searchText.value) {
+    params.searchText = searchText.value
+  }
   const res: { records: UserType[], total: number } = await request.get("/user/list/page", {
-    params: {
-      searchText: searchText.value,
-      pageNum: pageNum.value,
-      pageSize: pageSize.value
-    }
+    params
   })
   if (res.records.length <= 0) {
     showFailToast("无搜索用户");

@@ -223,7 +223,7 @@ const updateAvatarUrl = ref(false)
 const afterRead = async (file: any) => {
   updateAvatarUrl.value = true
   if (updateAvatarUrl.value) {
-    team.value.teamAvatarUrl = await request.post("/file/upload", {
+    team.value.teamAvatarUrl = await request.post("/common/uploadToCOS", {
       'file': file.file,
       'biz': "team_avatar"
     }, {

@@ -1,4 +1,5 @@
 import * as VueRouter from 'vue-router'
+import {createRouter, createWebHistory} from "vue-router";
 
 const routes = [
     {
@@ -160,11 +161,16 @@ const routes = [
 
 ]
 
-const routers = VueRouter.createRouter({
-    history: VueRouter.createWebHashHistory(),
-    // history: VueRouter.createWebHistory(),
+const routers = createRouter({
+    history: createWebHistory('/app/'), // 添加 base 前缀
     routes
 })
+
+// const routers = VueRouter.createRouter({
+//     // history: VueRouter.createWebHashHistory(),
+//     history: createWebHistory('/app/'),
+//     routes: newRoutes
+// })
 
 routers.beforeEach((to, from, next) => {
     to.meta.lastRoutePath = from.path;

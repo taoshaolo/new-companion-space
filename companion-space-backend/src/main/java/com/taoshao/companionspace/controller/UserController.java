@@ -216,11 +216,13 @@ public class UserController {
                     .like("contactInfo", searchText)
                     .or()
                     .like("email", searchText)
+                    .or()
+                    .like("username", searchText)
             );
         }
         User loginUser = userService.getLoginUser(request);
         Long userId = loginUser.getId();
-        String redisKey = MATCH_USER + userId + ":" + current;
+        String redisKey = MATCH_USER + userId + ":" + current + ":" + searchText;
         Page<UserVO> userVOPage = (Page<UserVO>) redisTemplate.opsForValue().get(redisKey);
         if (userVOPage != null) {
             return ResultUtil.success(userVOPage);
