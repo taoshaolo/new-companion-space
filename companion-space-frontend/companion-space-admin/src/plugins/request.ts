@@ -3,7 +3,7 @@ import {ElMessage} from 'element-plus';
 
 const request = axios.create({
     // baseURL: "http://localhost:8080/api",
-    baseURL: process.env.NODE_ENV === "development" ? 'http://localhost:8080/api' : 'http://49.232.232.166/api',
+    baseURL: process.env.NODE_ENV === "development" ? 'http://localhost:8080/api' : 'http://taoshao.icu/api',
     timeout: 60000,
     withCredentials: true,
 });
