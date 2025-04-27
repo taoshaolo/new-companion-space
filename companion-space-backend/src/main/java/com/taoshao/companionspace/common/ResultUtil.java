@@ -31,8 +31,4 @@ public class ResultUtil {
     public static <T> BaseResponse<T> error(ErrorCode errorCode, String description) {
         return new BaseResponse<>(errorCode.getCode(), errorCode.getMessage(), description);
     }
-
-    public static <T> BaseResponse<T> success(ErrorCode errorCode) {
-        return new BaseResponse<>(errorCode.getCode(), errorCode.getMessage(), errorCode.getDescription());
-    }
 }

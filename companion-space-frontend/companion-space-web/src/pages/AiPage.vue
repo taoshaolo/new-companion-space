@@ -1,7 +1,7 @@
 <template>
   <van-sticky>
     <van-nav-bar
-        title="AI 助手"
+        title="AI 小智"
         left-arrow
         @click-left="onClickLeft"
     >
@@ -10,6 +10,7 @@
   <div class="chat-container">
     <div class="content" ref="chatRoom" v-html="stats.content"></div>
     <van-cell-group inset style="position: fixed;bottom: 0;width: 100%">
+      <van-button style="padding-bottom: 4px" size="small" plain round  type="primary">查询规则</van-button>
       <van-field
           v-model="stats.text"
           center
@@ -28,11 +29,10 @@
 import {nextTick, onMounted, ref} from "vue";
 import {useRoute, useRouter} from "vue-router";
 import {showFailToast} from "vant";
-
 import getCurrent from "../service/currentUser";
 import request from "../service/myAxios";
 
-const defaultMessage = "你好,我是伙伴空间的智能 AI 助手,欢迎向我提问。";
+const defaultMessage = "你好,我是伙伴空间的智能 AI 助手小智,欢迎向我提问。";
 const route = useRoute();
 const router = useRouter();
 const chatRoom = ref(null);
@@ -51,6 +51,7 @@ const stats = ref({
   },
   text: "",
   content: "",
+  name: "",
   loading: false, // 添加 loading 状态
 });
 onMounted(async () => {
@@ -64,7 +65,8 @@ const send = async () => {
   } else {
     stats.value.loading = true; // 设置 loading 状态
     createContent(null, stats.value.user, stats.value.text);
-    let res = await request.post("/chat/aiChat", {
+    let res = await request.post("/xiaozhi/chat", {
+      memoryId: route.params.memoryId,
       message: stats.value.text,
     });
     stats.value.text = "";
@@ -184,5 +186,11 @@ const createContent = (remoteUser, nowUser, text) => {
 .self .text {
   background-color: #2bd277;
   color: #fff;
+}
+
+.rule {
+  /*position: absolute;*/
+  bottom: 0;
+  right: 0;
 }
 </style>

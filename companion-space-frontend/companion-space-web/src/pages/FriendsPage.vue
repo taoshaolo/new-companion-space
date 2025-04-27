@@ -20,7 +20,7 @@
           </div>
           <div class="friend-info">
             <div @click="AiChat" class="friend-name">
-              AI 助手
+              AI 小智
             </div>
             <div style="padding-right: 10px;" @click="AiChat">
               <van-icon :size="28" name="chat-o"/>

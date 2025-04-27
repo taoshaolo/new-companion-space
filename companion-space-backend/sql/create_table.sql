@@ -158,3 +158,21 @@ create table tag
     isDelete   tinyint  default 0                 not null comment '是否删除'
 )
     comment '标签' charset = utf8mb4;
+
+
+create table chat_memory
+(
+    id         bigint auto_increment comment '主键ID'
+        primary key,
+    name       varchar(32)                        not null comment '聊天记忆的名称',
+    memoryId   varchar(36)                             not null comment '聊天记忆的唯一标识符',
+    messages   text                               null comment '聊天消息的JSON字符串',
+    userId     bigint                             not null comment '用户id',
+    createTime datetime default CURRENT_TIMESTAMP null comment '创建时间',
+    updateTime datetime default CURRENT_TIMESTAMP null on update CURRENT_TIMESTAMP comment '更新时间',
+    isDelete   tinyint  default 0                 not null comment '是否删除',
+    constraint uk_memory_id
+        unique (memoryId)
+)
+    comment 'AI聊天记忆';
+

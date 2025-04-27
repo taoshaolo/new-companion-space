@@ -3,6 +3,14 @@ import {createRouter, createWebHistory} from "vue-router";
 
 const routes = [
     {
+        path: '/test',
+        meta: {
+            title: "测试",
+            noLayout: true, // 不需要使用 BasicLayout 的页面
+        },
+        component: () => import("../pages/ChatWindow.vue")
+    },
+    {
         path: '/',
         meta: {title: "首页"},
         component: () => import("../pages/IndexPage.vue")
