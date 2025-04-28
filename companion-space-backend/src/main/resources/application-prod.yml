@@ -18,7 +18,7 @@ server:
       cookie:
         #cookie将仅在localhost域上有效，
         #从而限制了cookie的共享范围，增加了安全性
-        domain: taoshao.icu
+        domain: xxx
 knife4j:
   enable: false
 
@@ -30,6 +30,6 @@ mybatis-plus:
 # 第三方登录配置 申请地址 https://uniqueker.top/
 third:
   config:
-    appId: 3078
-    appKey: 464872d3e7df753bd7e605baca4561ba
-    redirectUrl: http://taoshao.icu
+    appId: xxx
+    appKey: xxx
+    redirectUrl: xxx
