@@ -36,8 +36,8 @@ public class ChatMemoryVO {
     private Long userId;
 
     /**
-     * 创建时间
+     * 更新时间时间
      */
-    private Date createTime;
+    private Date updateTime;
 
 }

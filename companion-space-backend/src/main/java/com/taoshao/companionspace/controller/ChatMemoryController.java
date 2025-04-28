@@ -31,8 +31,7 @@ public class ChatMemoryController {
      */
     @Resource
     private ChatMemoryService chatMemoryService;
-    @Resource
-    private UserService userService;
+
 
     /**
      * 查询所有自己的会话
