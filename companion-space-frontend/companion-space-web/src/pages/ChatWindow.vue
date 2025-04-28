@@ -2,7 +2,7 @@
   <div class="app-layout">
     <van-sticky>
       <van-nav-bar
-          title="AI 小智"
+          :title="chatName"
           left-arrow
           @click-left="onClickLeft"
           @click-right="showPopover = true"
@@ -15,18 +15,7 @@
           </van-popover>
         </template>
       </van-nav-bar>
-
     </van-sticky>
-<!--    <div class="sidebar">-->
-<!--      <div class="logo-section">-->
-<!--&lt;!&ndash;        <img src="@/assets/logo.png" alt="硅谷小智" width="160" height="160" />&ndash;&gt;-->
-<!--        <span class="logo-text">AI 小智</span>-->
-<!--      </div>-->
-<!--      <el-button class="new-chat-button" @click="newChat">-->
-<!--        <i class="fa-solid fa-plus"></i>-->
-<!--        &nbsp;新会话-->
-<!--      </el-button>-->
-<!--    </div>-->
     <div class="main-content">
       <div class="chat-container">
         <div class="message-list" ref="messaggListRef">
@@ -63,68 +52,94 @@
           <van-field
             v-model="inputMessage"
             placeholder="请输入消息"
-            @keyup.enter="sendMessage"
-          ></van-field>
-          <van-button @click="sendMessage" :disabled="isSending" type="primary"
-            >发送</van-button
           >
+            <template #button>
+              <van-button size="small" @click="sendMessage" :disabled="isSending" type="primary">发送</van-button>
+            </template>
+          </van-field>
         </div>
       </div>
     </div>
+    <van-popup
+        v-model:show="showPopup"
+        position="right"
+        :style="{ width: '50%', height: '100%' }"
+    >
+      <div
+          v-for="(action, index) in chatMemories"
+          :key="index"
+          @click="selectChatMemory(action)"
+          class="chat-memory-item"
+      >
+        {{ action.name }} | {{ moment(action.updateTime).format("YYYY-MM-DD") }}
+      </div>
+    </van-popup>
+    <van-popup v-model:show="showNewChatPopup" >
+        <div style="padding: 20px;">
+          <van-field v-model="newChatName" placeholder="请输入会话名称" />
+          <div style="margin-top: 20px; text-align: right;">
+            <van-button size="small" @click="cancelNewChat">取消</van-button>
+            <van-button size="small" type="primary" @click="createNewChat">确定</van-button>
+          </div>
+        </div>
+    </van-popup>
   </div>
 </template>
 
 <script setup>
 import { onMounted, ref, watch } from 'vue'
-import axios from 'axios'
-import { showToast } from 'vant';
+import request from "../service/myAxios";
+import {useRouter} from "vue-router";
+import moment from "moment";
 
 const messaggListRef = ref()
 const isSending = ref(false)
-const uuid = ref()
 const inputMessage = ref('')
 const messages = ref([])
 const showPopover = ref(false);
+const showPopup = ref(false);
+const chatMemories = ref([]);
+const router = useRouter();
+const showNewChatPopup = ref(false);
+const newChatName = ref('');
+const chatName = ref('');
+const currentMemoryId = ref('');
 
 const actions = [
   {
     text: '新会话'
   },
   {
-    text: '选择其他对话'
+    text: '其他对话'
   }
 ];
 const onClickLeft = () => {
-  showPopover.value = true;
+  router.back();
 };
 const onClickRight = () => {
   showPopover.value = true
 };
 
 const onSelect = (action) => {
-  if (action.name === 'newConversation') {
-    // 处理新会话逻辑
-    console.log('新会话被选中');
-  } else if (action.name === 'selectOtherConversation') {
+  if (action.text === '新会话') {
+    showNewChatPopup.value = true;
+  } else if (action.text === '其他对话') {
     // 处理选择其他对话逻辑
-    console.log('选择其他对话被选中');
+    getChatMemories();
   }
   showPopover.value = false; // 选择后隐藏 popover
 };
 onMounted(() => {
   // 移除 setInterval，改用手动滚动
   watch(messages, () => scrollToBottom(), { deep: true })
-  hello()
+  // 页面加载时获取最新对话历史记录
+  getChatMemories();
 })
 
 const scrollToBottom = () => {
   if (messaggListRef.value) {
     messaggListRef.value.scrollTop = messaggListRef.value.scrollHeight
   }
-}
-
-const hello = () => {
-  sendRequest('你好')
 }
 
 const sendMessage = () => {
@@ -135,6 +150,10 @@ const sendMessage = () => {
 }
 
 const sendRequest = (message) => {
+  if (!currentMemoryId.value) {
+    console.error('未选择会话，请先选择或创建一个会话。');
+    return;
+  }
   isSending.value = true
   const userMsg = {
     isUser: true,
@@ -142,12 +161,7 @@ const sendRequest = (message) => {
     isTyping: false,
     isThinking: false,
   }
-  //第一条默认发送的用户消息”你好“不放入会话列表
-  if(messages.value.length > 0){
-    messages.value.push(userMsg)
-  }
-
-
+  messages.value.push(userMsg)
   // 添加机器人加载消息
   const botMsg = {
     isUser: false,
@@ -158,18 +172,17 @@ const sendRequest = (message) => {
   messages.value.push(botMsg)
   const lastMsg = messages.value[messages.value.length - 1]
   scrollToBottom()
-
-  axios
+  request
     .post(
-      '/api/xiaozhi/stream',
-      { memoryId: uuid.value, message },
+      '/xiaozhi/stream',
+      { memoryId: currentMemoryId.value, message },
       {
         responseType: 'stream', // 必须为合法值 "text"
         onDownloadProgress: (e) => {
           const fullText = e.event.target.responseText // 累积的完整文本
           let newText = fullText.substring(lastMsg.content.length)
           lastMsg.content += newText //增量更新
-          console.log(lastMsg)
+          // console.log(lastMsg)
           scrollToBottom() // 实时滚动
         },
       }
@@ -197,15 +210,97 @@ const convertStreamOutput = (output) => {
     .replace(/>/g, '&gt;')
 }
 
-const newChat = () => {
-  // 这里添加新会话的逻辑
-  console.log('开始新会话')
-  localStorage.removeItem('user_uuid')
-  window.location.reload()
+const cancelNewChat = () => {
+  showNewChatPopup.value = false;
+  newChatName.value = '';
+};
+
+const createNewChat  = () => {
+  if (newChatName.value) {
+    request.post('/chatMemory', {
+      name: newChatName.value
+    }).then((response) => {
+      // console.log('创建新会话成功:', response)
+      // currentMemoryId.value = response.memoryId;
+      // 调用 selectChatMemory 加载新会话
+      selectChatMemory({ value: response });
+      showNewChatPopup.value = false;
+      newChatName.value = '';
+    }).catch((error) => {
+      console.error('创建新会话失败:', error);
+    });
+  }
+}
+const getChatMemories = () => {
+  request.get('/chatMemory').then((response) => {
+    // console.log('获取会话列表成功:', response)
+    chatMemories.value = response.map((memory) => ({
+      name: memory.name,
+      value: memory.memoryId,
+      updateTime: memory.updateTime
+    }));
+    showPopup.value = true;
+
+
+  }).catch((error) => {
+    console.error('获取会话列表失败:', error)
+  })
+}
+
+const selectChatMemory = (action) => {
+  currentMemoryId.value = action.value;
+  request.get(`/chatMemory/${action.value}`).then((response) => {
+    // console.log('选择会话成功:', response.messages)
+    // 这里需要根据后端返回的 ChatMemory 对象更新 messages
+    // console.log(response)
+    messages.value = [];
+    chatName.value = response.name;
+
+    // 解析历史消息
+    if (response.messages !== null){
+      const historyMessages = JSON.parse(response.messages);
+      historyMessages.forEach((message) => {
+        if (message.type === 'USER') {
+          const userContent = message.contents ? message.contents.map(item => item.text).join('') : '';
+          messages.value.push({
+            isUser: true,
+            content: convertStreamOutput(userContent),
+            isTyping: false,
+            isThinking: false
+          });
+        } else if (message.type === 'AI') {
+          messages.value.push({
+            isUser: false,
+            content: convertStreamOutput(message.text),
+            isTyping: false,
+            isThinking: false
+          });
+        }
+      });
+    }
+
+    showPopup.value = false;
+    scrollToBottom();
+  }).catch((error) => {
+    console.error('选择会话失败:', error)
+  })
 }
 
 </script>
+
 <style scoped>
+
+/* 新增会话列表项样式 */
+.chat-memory-item {
+  padding: 12px 16px;
+  cursor: pointer;
+  border-bottom: 1px solid #e0e0e0;
+  transition: background-color 0.2s ease;
+}
+
+.chat-memory-item:hover {
+  background-color: #f0f0f0;
+}
 .app-layout {
   display: flex;
   height: 100vh;

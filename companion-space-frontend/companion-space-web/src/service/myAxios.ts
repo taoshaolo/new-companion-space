@@ -29,8 +29,6 @@ request.interceptors.response.use(function (response) {
     } else if (data.code === 40101) {
         showFailToast(data.description)
         router.back()
-    } else {
-        showFailToast(data.description)
     }
 
 }, function (error) {

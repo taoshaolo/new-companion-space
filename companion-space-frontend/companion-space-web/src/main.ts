@@ -4,7 +4,7 @@ import 'vant/es/dialog/style';
 import 'vant/es/notify/style';
 import 'vant/es/image-preview/style';
 import App from './App.vue'
-import {Card, CellGroup, Divider, Empty, NavBar, Button, ConfigProvider, Field, Icon, Form, Popup, DropdownMenu, DropdownItem} from 'vant';
+import {ActionSheet, Popover, Card, CellGroup, Divider, Empty, NavBar, Button, ConfigProvider, Field, Icon, Form, Popup, DropdownMenu, DropdownItem} from 'vant';
 import router from "./router";
 import '@vant/touch-emulator';
 
@@ -23,6 +23,8 @@ app.use(Divider);
 app.use(ConfigProvider);
 app.use(DropdownMenu);
 app.use(DropdownItem);
+app.use(ActionSheet);
+app.use(Popover);
 app.mount('#app')
 
 

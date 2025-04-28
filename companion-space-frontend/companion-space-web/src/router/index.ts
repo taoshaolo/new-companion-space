@@ -1,11 +1,10 @@
-import * as VueRouter from 'vue-router'
 import {createRouter, createWebHistory} from "vue-router";
 
 const routes = [
     {
-        path: '/test',
+        path: '/ai',
         meta: {
-            title: "测试",
+            title: "AI",
             noLayout: true, // 不需要使用 BasicLayout 的页面
         },
         component: () => import("../pages/ChatWindow.vue")
@@ -149,14 +148,14 @@ const routes = [
         },
         component: () => import("../pages/UserBlogPage.vue")
     },
-    {
-        path: "/ai",
-        component: () => import("../pages/AiPage.vue"),
-        meta: {
-            title: "AI 助手",
-            noLayout: true, // 不需要使用 BasicLayout 的页面
-        }
-    },
+    // {
+    //     path: "/ai",
+    //     component: () => import("../pages/AiPage.vue"),
+    //     meta: {
+    //         title: "AI 助手",
+    //         noLayout: true, // 不需要使用 BasicLayout 的页面
+    //     }
+    // },
     {
         path: "/mapContainer",
         meta: {
